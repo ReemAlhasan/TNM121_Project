@@ -2,10 +2,48 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>Higher Lower Game</title>
+    <link rel="styleSheet" href="styleSheet.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
 <body>
-    
+    <div> <!-- Upper section of main page, logo, about us menu button and short text about game-->
+        <h1>Higher or Lower</h1>
+        <h2><a href="aboutUsPage.html">About Us</a></h2>
+        <p>Welcome to the hardest quiz of your life</p>
+    </div>
+
+    <div class="menu-container"> <!-- Settings section of the main page-->
+        <h2>Settings</h2>
+        
+        <div class="menu-item"> <!--Image only mode-->
+            <label class="switch">
+                <input type="checkbox" id="imageMode">
+                <span class="slider"></span>
+            </label>
+            <span>Image Only Mode</span>
+        </div>
+        
+        <div class="menu-item"><!--Select genre-->
+            <label for="genre">Select Genre</label>
+            <select id="genre">
+                <option value="">--Choose Genre--</option>
+                <option value="action">Action</option>
+                <option value="comedy">Comedy</option>
+                <option value="drama">Drama</option>
+                <option value="horror">Horror</option>
+            </select>
+        </div>
+
+        <div class="menu-item">
+            <label>Release Date Range:</label>
+            <input type="date" id="startDate">
+            <input type="date" id="endDate">
+
+        </div>
+
+        <button id="startGame"><a href="gamePage.html">Start Game</a></button>
+    </div>
 </body>
 </html>
