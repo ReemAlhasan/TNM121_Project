@@ -1,0 +1,45 @@
+
+
+____________________________START SERVER___________________________________
+
+    1. Make sure everything below is done going from last to first.
+    2. Navigate to server directory and write the following in terminal to start the server. 
+		command: node app.js
+	3. Open a html file in a browser (e.g., Firefox) and you are ready to go!
+
+______________________________LOAD DATA_____________________________________
+
+        OBS: this step is done once to insert the data in to your local mongodb database
+
+	1. Navigate via terminal to server directory and ensure all external modules are 
+		installed accorded to "package.json" by running the 
+		command:npm install.
+		(A package-lock.json and node modules should show upp now)
+	2. Go to the mongo leaf in left command pannel and ensure the mongo server is up and running and conected. 
+		if not -> MongoDB Connection String: mongodb://127.0.0.1:27017
+		(should be conected and thre defult directorys show)
+	3. The "/server/mongodb/mongodb-setup.js" needs to be executed once to inport the documents into 
+		MongoDB Database Collection. Do that via the following 
+		command: node mongodb/mongodb-setup.js
+    4. OBS once you have conected the local mongodb database you can delite the files   
+        "Server/data-import/package-lock.json" and Server/data-import/mongodb-modules"
+        before commiting and pushing your chanches to GIT repository
+
+___________________________GET CODE AND SYNC GIT ___________________________
+
+    There is multiple ways of conection to git. This is (according to my investigation) the esiest 
+    1. Downlowd GitHub desktop 
+    2. log in 
+    3. If working corectly you should se all repositorys avalible to you
+    4. Click on disired projekt and click "clone"
+    5. You sould be able to see the code in Visual Studio and all chanches made in surce control
+    6. When canting to save a change. write a coment. cklick in comit and then on sync. 
+
+____________________________FIRST TIME ON COMPUTER?________________________
+
+    1. Examine if the following programes are installed
+	    - Install node.js 
+	    - Install mongoDB Commpas
+    2. Downlowd following extension in Visuall Code
+	    - MongoDB for VS Code
+        - open in browser
