@@ -8,23 +8,73 @@
     <title>Document</title>
 </head>
 <body>
-    <div> <!-- Upper section of main page, logo, about us menu button and short text about game-->
-        <h1>Higher or Lower</h1>
-        <h2><a href="aboutUsPage.html">About Us</a></h2>
-        <p>Welcome to the hardest quiz of your life</p>
+    <div class="homePageAbout"> <!-- Upper section of main page, logo, about us menu button and short text about game-->
+        <button class="AboutUsButton"><a href="aboutUsPage.html">About Us</a></button>
+        <img class="logo" src="BigHL.png" alt="Higher Lower Logo"> <!-- Logo image pathway-->
+        <h1>Higher Lower Game</h1>
+        <p class="hpGameInfo">Welcome to the hardest quiz of your life</p>
+
     </div>
+ 
 
     <div class="menu-container"> <!-- Settings section of the main page-->
         <h2>Settings</h2>
+        <p>Please choose your preferred settings that you want to be shown:</p>
         
-        <div class="menu-item"> <!--Image only mode-->
-            <label class="switch">
-                <input type="checkbox" id="imageMode">
-                <span class="slider"></span>
-            </label>
-            <span>Image Only Mode</span>
+        <div class="enableSettingsContainer"> <!--Setting options-->
+            <span class="enableSettingsText1">Image</span>
+            <div class ="enableSettingsButton1"> <!--Toggle switch for image to be shown-->
+                <label class="switch">
+                    <input type="checkbox" id="imageShown">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <span class="enableSettingsText2">Genre</span>
+            <div class ="enableSettingsButton2"> <!--Toggle switch for genre to be shown-->
+                <label class="switch">
+                    <input type="checkbox" id="genreShown">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <span class="enableSettingsText3">Certificate</span>
+            <div class ="enableSettingsButton3"> <!--Toggle switch for certificate to be shown-->
+                <label class="switch">
+                    <input type="checkbox" id="certificateShown">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <span class="enableSettingsText1">Director</span>
+            <div class ="enableSettingsButton1"> <!--Toggle switch for director to be shown-->
+                <label class="switch">
+                    <input type="checkbox" id="directorShown">
+                    <span class="slider"></span>
+                </label>
+            </div>
+           
+            <span class="enableSettingsText2">Description</span>
+            <div class ="enableSettingsButton2"> <!--Toggle switch for description to be shown-->
+                <label class="switch">
+                    <input type="checkbox" id="descriptionShown">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <span class="enableSettingsText3">Release Year</span>
+            <div class ="enableSettingsButton3"> <!--Toggle switch for release year to be shown-->
+                <label class="switch">
+                    <input type="checkbox" id="releaseYearShown">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+
         </div>
         
+        <h3>Advanced Settings</h3>
+
         <div class="menu-item"><!--Select genre-->
             <label for="genre">Select Genre</label>
             <select id="genre">
@@ -33,6 +83,18 @@
                 <option value="comedy">Comedy</option>
                 <option value="drama">Drama</option>
                 <option value="horror">Horror</option>
+            </select>
+        </div>
+
+        <div class="menu-item"><!--Select certificate-->
+            <label for="certificate">Select Certificate</label>
+            <select id="certificate">
+                <option value="">--Choose Certificate--</option>
+                <option value="All">Movies approved for all ages</option>
+                <option value="7+">Movies for children 7 and older</option>
+                <option value="13+">Movies for children 13 and older</option>
+                <option value="15+">Movies for children 15 and older</option>
+                <option value="18+">Movies for children 18 and older</option>
             </select>
         </div>
 
