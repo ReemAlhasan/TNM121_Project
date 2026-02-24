@@ -24,11 +24,13 @@ const dbServerUrl = "mongodb://" + dbHostname + ":" + dbPort + "";
 const dbClient = new MongoClient(dbServerUrl);
 
 //------- inintial Colleciton ---------
-const dbName = "tnm121-sus";
-const dbCollectionName = "sus-submissions";
+const dbName = "tnm121-project";
+const dbActorInfoCollectionName = "actorinfo";
+const dbBechdelCollectionName = "bechdel";
+const dbImdbCollectionName = "imdb";
 
 //------- addidtional meta data -------
-const systemName = "Client_Server_Database";
+const systemName = "TNM121 Project MongoDB Server";
 
 //_____________________ MIME TYPE HANDLER________________________________________________
 
@@ -48,13 +50,9 @@ const server = http.createServer((req, res) => {
 
     //---------------------------- API ENDPOINTS -------------------------
     /** 
-     * 
-     * 
-     * 
-     * 
-     * case: serverUrl//button1       -> Respond with JSON data from MongoDb database
-     * deafult: serverUrl//           -> Deafult response
-     * 
+     * case: "startGame"            -> respond with all data about 2 random Movies 
+     * case: "getMovieInfo"         -> respond with all data about 1 random Movie
+     * deafult: serverUrl//         -> Deafult response
      * 
      * 
      * 
@@ -84,22 +82,19 @@ const server = http.createServer((req, res) => {
 
         //  -------------HANDELING API ENDPOINTS -------------
         switch (pathComponents[1]) {
-            //serverUrl//button1   
-            case "button1":
-                /** ____________EXAMPEL FROM LAB 4_____________________  
-                 * if (pathComponents.length === 2) {
-                    console.log('raouting sends to artists fucntion');
-                    routing_artists(res);
-                }else if (pathComponents.length === 3) {
-                    console.log('raouting sends to artistid fucntion');
-                    const artistId = pathComponents[2];
-                    console.log('artistId:', artistId);
-                    routing_artistid(res, artistId);
-                }
-                break; */
-                console.log('routing button1');
-                routing_button1(res);
+
+            //serverUrl//StartGame  
+            case "startGame":
+                
+                console.log('routing startGame');
+                routing_startGame(res);
                 break;
+
+            case "getMovieInfo":
+                console.log('routing getMovieInfo');
+                routing_getMovieInfo(res);
+                break;
+
             //serverUrl
             default:
                 sendResponse(res, 200, "text/plain", "Default response fore Node.js server. No specifik client request");
@@ -114,16 +109,16 @@ const server = http.createServer((req, res) => {
 
 //___________________ ROUTING REQUESTS API ENDPOINTS _____________________________________
 
-async function routing_button1(res) {
+async function routing_startGame(res) {
 
     // ------------- connect to MongoDB server ---------------------
-    console.log('button1 funciton is handeling request');
+    console.log('startGame function is handeling request');
     // establish an active connection to the specified MongoDB server
     await dbClient.connect();  
     // select a specified database on the server
     const db = dbClient.db(dbName);   
     // select a specified (document) collection in the database                 
-    const dbCollection = db.collection(dbCollectionName);   
+    const dbCollection = db.collection(dbImdbCollectionName);
     
     // --------------- Get JSON documents ------------------------
     // slect documetnsin collection 
