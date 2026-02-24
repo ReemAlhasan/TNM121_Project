@@ -1,0 +1,24 @@
+
+______________________API___________________ 
+
+---------------"startGame"-------------
+When "startGameButton" is pushed ----> 
+request from client to "startGame" -----> 
+respond with all data about 2 random Movies 
+
+one is stored in "previusMovie"
+and one is sotred in "currentMovie"
+
+---------------"getMovieInfo"-------------
+If client choose corect awnser ----->
+request from client to "getMovieInfo" ----->
+respond with all data about 1 random Movie 
+
+__________________IN FUTURE___________________
+Idealy we dont want to send all data about a movie but only the nessesary 
+data needed depending on chosent settings. 
+
+
+
+
+

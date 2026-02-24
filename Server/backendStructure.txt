@@ -1,7 +1,0 @@
-
-______________GAME___________________
-
-request from client to start game -> give two pictures 
-
-
-client gives awnser -> give awnser 
