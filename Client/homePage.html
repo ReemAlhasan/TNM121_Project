@@ -5,7 +5,7 @@
     <title>Higher Lower Game</title>
     <link rel="styleSheet" href="styleSheet.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    
 </head>
 <body>
     <div class="homePageAbout"> <!-- Upper section of main page, logo, about us menu button and short text about game-->
@@ -15,8 +15,13 @@
         <p class="hpGameInfo">Welcome to the hardest quiz of your life</p>
 
     </div>
- 
+    
+    <!--Start game button-->
+    <div class="startGameButtonContainer">
+        <button id="startGame" class="startGameButton"><a href="gamePage.html">Start Game</a></button>
+    </div>
 
+    <!--Settings section-->
     <div class="menu-container"> <!-- Settings section of the main page-->
         <h2>Settings</h2>
         <p>Please choose your preferred settings that you want to be shown:</p>
@@ -74,38 +79,108 @@
         </div>
         
         <h3>Advanced Settings</h3>
+        <div class="advancedSettingsContainer">
+            <div class="genreSelect"><!--Select genre-->
+                <label for="genre">Select Genre</label>
+                <select id="genre">
+                    <option value="">--Choose Genre--</option>
+                    <option value="action">Action</option>
+                    <option value="comedy">Comedy</option>
+                    <option value="drama">Drama</option>
+                    <option value="horror">Horror</option>
+                </select>
+            </div>
 
-        <div class="menu-item"><!--Select genre-->
-            <label for="genre">Select Genre</label>
-            <select id="genre">
-                <option value="">--Choose Genre--</option>
-                <option value="action">Action</option>
-                <option value="comedy">Comedy</option>
-                <option value="drama">Drama</option>
-                <option value="horror">Horror</option>
-            </select>
+            <div class="ageSelect"><!--Select certificate-->
+                <label for="certificate">Select Certificate</label>
+                <select id="certificate">
+                    <option value="">--Choose Certificate--</option>
+                    <option value="All">Movies approved for all ages</option>
+                    <option value="7+">Movies for children 7 and older</option>
+                    <option value="13+">Movies for teens 13 and older</option>
+                    <option value="15+">Movies for teens 15 and older</option>
+                    <option value="18+">Movies for people 18 and older</option>
+                </select>
+            </div>
         </div>
-
-        <div class="menu-item"><!--Select certificate-->
-            <label for="certificate">Select Certificate</label>
-            <select id="certificate">
-                <option value="">--Choose Certificate--</option>
-                <option value="All">Movies approved for all ages</option>
-                <option value="7+">Movies for children 7 and older</option>
-                <option value="13+">Movies for children 13 and older</option>
-                <option value="15+">Movies for children 15 and older</option>
-                <option value="18+">Movies for children 18 and older</option>
-            </select>
+        
+    
+    <div class="filter-item">
+        <div class="filter-label">
+            Release year:
+            <span id="yearRangeValue" class="value-pill" aria-live="polite">1980–2020</span>
         </div>
-
-        <div class="menu-item">
-            <label>Release Date Range:</label>
-            <input type="date" id="startDate">
-            <input type="date" id="endDate">
-
+    
+        <div class="dual-range" data-kind="year">
+            <div class="range-rail"></div>
+            <div class="range-highlight" id="yearHighlight"></div>
+        
+            <input
+            type="range"
+            id="yearMin"
+            class="filter-range dual-handle"
+            min="1960"
+            max="2026"
+            step="1"
+            value="1960"
+            aria-label="Minimum release year"
+            />
+            <input
+            type="range"
+            id="yearMax"
+            class="filter-range dual-handle"
+            min="1960"
+            max="2026"
+            step="1"
+            value="2026"
+            aria-label="Maximum release year"
+            />
         </div>
+    
+        <div class="range-scale">
+            <span>1960</span><span>1990</span><span>2026</span>
+        </div>
+    </div>
 
-        <button id="startGame"><a href="gamePage.html">Start Game</a></button>
+
+    <div class="filter-item">
+        <div class="filter-label">
+            Runtime (min):
+            <span id="runtimeRangeValue" class="value-pill" aria-live="polite">0–240</span>
+        </div>
+    
+        <div class="dual-range" data-kind="runtime">
+            <div class="range-rail"></div>
+            <div class="range-highlight" id="runtimeHighlight"></div>
+        
+            <input
+            type="range"
+            id="runtimeMin"
+            class="filter-range dual-handle"
+            min="0"
+            max="500"
+            step="1"
+            value="0"
+            aria-label="Minimum runtime in minutes"
+            />
+            <input
+            type="range"
+            id="runtimeMax"
+            class="filter-range dual-handle"
+            min="0"
+            max="500"
+            step="1"
+            value="500"
+            aria-label="Maximum runtime in minutes"
+            />
+        </div>
+    
+        <div class="range-scale">
+            <span>0</span><span>250</span><span>500</span>
+        </div>
+    </div>
     </div>
 </body>
 </html>
+
+<script src="script.js"></script>
