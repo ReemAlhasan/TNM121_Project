@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: rgb(0, 0, 0);
+    background-color: rgb(0, 3, 20);
     color:white;
 }
 
@@ -42,7 +42,6 @@ h1{
     width: 120px;
     height: 40px;
     padding: 0;
-    border: none;
     border-radius: 40px;
     background: linear-gradient(90deg, #910915 0%, #ff3503 100%);
     color: #fff;
@@ -54,7 +53,7 @@ h1{
     letter-spacing: 1px;
 }
 
-.AboutUsButton:hover, .AboutUsButton:focus, .startGameButton:hover, .startGameButton:focus, .menu-container:hover, .menu-container:focus {
+.AboutUsButton:hover, .AboutUsButton:focus, .startGameButton:hover, .startGameButton:focus, .menu-container:hover, .menu-container:focus, .higherButton:hover, .higherButton:focus, .lowerButton:hover, .lowerButton:focus {
     transform: translateY(-2px) scale(1.04);
     outline: none;
 }
@@ -76,7 +75,7 @@ h1{
 .menu-container{
     width: 80%;
     padding: 20px;
-     background: linear-gradient(90deg, #910915 0%, #ff3503 100%);
+    background: linear-gradient(90deg, #910915 0%, #ff3503 100%);
     margin: 50px auto;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -110,6 +109,8 @@ h1{
     grid-column: 2;
     justify-self: start;
     align-self: top;
+    padding-right: 10px;
+    padding-left: 10px;
     font-size: 18px;
 }
 
@@ -117,6 +118,8 @@ h1{
     grid-column: 4;
     justify-self: start;
     align-self: top;
+    padding-right: 10px;
+    padding-left: 10px;
     font-size: 18px;
 }
 
@@ -124,6 +127,8 @@ h1{
     grid-column: 6;
     justify-self: start;
     align-self: top;
+    padding-right: 10px;
+    padding-left: 10px;
     font-size: 18px;
 }
 
@@ -163,6 +168,7 @@ button:hover {
     position:absolute;
     cursor: pointer;
     background-color: red;
+    border: 1px solid black;
     border-radius: 20px;
     top: 0;
     left: 0;
@@ -174,17 +180,18 @@ button:hover {
 .slider:before {
     position:absolute;
     content:"";
-    height: 16px;
-    width: 16px;
+    height: 12px;
+    width: 12px;
     left: 2px;
+    border:#0b1020 solid 1px;
     bottom: 2px;
-    background-color: white;
+    background-color: rgb(255, 255, 255);
     border-radius: 50%;
     transition: .3s;
 }
 
 input:checked + .slider {
-    background-color: rgb(160, 197, 12);
+    background-color: rgb(45, 105, 77);
 }
 
 input:checked + .slider:before {
@@ -255,7 +262,8 @@ input:checked + .slider:before {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.95rem;
+  font-size: 18px;
+  font-weight: bold;
   margin-bottom: 8px;
 }
 .filter-control {
@@ -298,6 +306,7 @@ input:checked + .slider:before {
 .dual-range {
   position: relative;
   height: 34px;       /* enough room for thumbs */
+  
 }
 .range-rail {
   position: absolute;
@@ -312,7 +321,7 @@ input:checked + .slider:before {
   top: 50%;
   transform: translateY(-50%);
   height: 4px;
-  background: rgb(160, 197, 12);
+  background: rgb(45, 105, 77);
   border-radius: 999px;
 }
 
@@ -331,7 +340,7 @@ input:checked + .slider:before {
 .filter-range.dual-handle::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  height: 18px; width: 18px;
+  height: 16px; width: 16px;
   border-radius: 50%;
   background: rgba(243, 192, 23, 0.897);
   border: 2px solid rgba(0, 0, 0, 0.562);
@@ -383,3 +392,109 @@ input:checked + .slider:before {
     justify-content: center;
     align-items: center;
 }
+
+
+/*Game Page */
+
+.gamePageContainer{
+    display: grid;
+    grid-template-columns: 2fr 1fr 2fr;
+    grid-template-rows: 1fr;
+
+}
+
+.previousMovie{
+    grid:1;
+}
+
+.scoreContainer{
+    grid:2;
+}
+
+.currentMovie{
+    grid:3;
+    align-items: center;
+}
+
+.scoreDiv {
+    grid:2;
+    align-self: center;
+    align-content: center;
+    text-align: center;
+    height: 120px;
+    border: none;
+    border-radius: 40px;
+    background: linear-gradient(90deg, #910915 0%, #ff3503 100%);
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 50px;
+    margin-bottom: 150px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+    letter-spacing: 1px;
+}
+
+.scoreOutput {
+    border-radius: 20px;
+    justify-self: center;
+    border: dotted;
+    width: 50%;
+    border-color: yellow;
+}
+
+.higherButton, .lowerButton {
+    align-self: center;
+    grid:2;
+    height: 120px;
+    padding: 0;
+    border: none;
+    border-radius: 40px;
+    background: linear-gradient(90deg, #910915 0%, #ff3503 100%);
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 50px;
+    transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+    letter-spacing: 1px;
+}
+
+.moviePicture {
+    width: 75%;
+    justify-self: center;
+    align-self: center;
+    display: block;         
+    margin: 0 auto;          
+}
+
+.pMovieInfo, .cMovieInfo {
+    justify-self: center;  
+    align-self: center;      
+    text-align: center;      
+    width: 80%;
+    height: 50%;
+    border: none;
+    border-radius: 40px;
+    background: linear-gradient(90deg, #910915 0%, #ff3503 100%);
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 50px;
+    margin-bottom: 150px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+    letter-spacing: 1px;
+    padding: 20px;
+    padding-bottom: 50px;
+}
+
+.movieRating {
+    font-size: 40px;
+    border-radius: 20px;
+    justify-self: center;
+    border: dotted;
+    width: 50%;
+    border-color: yellow;
+}
+
