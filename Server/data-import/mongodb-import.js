@@ -38,6 +38,7 @@ console.log("Bechdel Data Loaded for DB Import (version): " + bechdelJsonData.ve
 const imdbJsonData = require("./data/imdb.json");
 console.log("IMDb Data Loaded for DB Import (version): " + imdbJsonData.version);
 
+
 // MongoDB Driver Module loading, server configuration, and database client initialization
 const MongoClient = require("mongodb").MongoClient;
 const dbHostname = "127.0.0.1"; 

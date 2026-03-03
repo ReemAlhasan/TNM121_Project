@@ -43,6 +43,8 @@ const mimeTypes = {
     ".png": "image/png",
     ".txt": "text/plain"
 };
+//______________________GLOBAL VARIABLES FOR SERVER _____________________________________________
+let idArray = [];
 
 //___________________ INCOMING MESSAGE ROUTING ____________________________________________
 const server = http.createServer((req, res) => {
@@ -109,37 +111,62 @@ const server = http.createServer((req, res) => {
 
 //___________________ ROUTING REQUESTS API ENDPOINTS _____________________________________
 
-async function routing_startGame(res) {
+async function routing_getMovieInfo(res) {
+    
 
     // ------------- connect to MongoDB server ---------------------
-    console.log('startGame function is handeling request');
+    console.log('getMovieInfo function is handeling request');
     // establish an active connection to the specified MongoDB server
     await dbClient.connect();  
+    
+    
+    // --------------- Get JSON documents ------------------------
     // select a specified database on the server
     const db = dbClient.db(dbName);   
     // select a specified (document) collection in the database                 
     const dbCollection = db.collection(dbImdbCollectionName);
     
-    // --------------- Get JSON documents ------------------------
-    // slect documetnsin collection 
-    const findQuery = {};     
-    // sort results (by timestamp, old to new)                      
-    const sortQuery = { timestamp: 1 };    
+    
+    loadIdArray(dbCollection);
+    // produce random number 
+    const randomIndex = Math.floor(Math.random() * idArray.length);
+    // get id by random index
+    const randomItem = idArray[randomIndex];
+    // slect document with the random id
+    const findQuery = { normalized_id: randomItem.normalized_id };
+
+
+    console.log("Querying for Movie with id:", findQuery);
     // fields with value 0: excluded; fields with value 1: included in results   
-    const projectionQuery = { item_results: 0 };    
+    // const projectionQuery = { item_results:1, director_results:0, director_id_results:0, actor_results:0, actor_id_results:0, votes:0};    
+
+    const projectionQuery = {name: 1 };   //item_results:1, director_results:0, director_id_results:0, actor_results:0, actor_id_results:0, votes:0 
     // adds all queried documents into a javascript array
-    const findAllResult = await dbCollection.find(findQuery).sort(sortQuery).project(projectionQuery).toArray();        
-    console.log("Found Documents Count:", findResult.length);
+    const findAllResult = await dbCollection.find(findQuery).toArray();        
+    console.log("Found Documents Count:", findAllResult.length);
 
 
     // a JSON object *cannot* be simply transmitted in a HTTP message's body,
     // but it needs to be "serialized" (turned into a string) first
-    const jsonDataAsString = JSON.stringify(solarSystemData);
+    const jsonDataAsString = JSON.stringify(findAllResult);
     // send serialized JSON data as MIME type "application/json"
     sendResponse(res, 200, "application/json", jsonDataAsString);
 }
 
 //___________________ ADDITIONAL ESSENTIAL FUNCTIONS ____________________
+
+async function loadIdArray(dbCollection) {
+    // count 
+    //const count = dbCollection.countDocuments();
+    const findQuery = {};
+    const projectionQuery = {normalized_id: 1};
+    
+    idArray =await dbCollection.find(findQuery).project(projectionQuery).toArray();
+    // console.log(idArray);
+    console.log(idArray.length);
+    console.log(idArray[0]);
+    console.log(idArray[idArray.length-1]);
+}
 
 //--------------- Respond to request templete ----------------------
 function sendResponse(res, statusCode, contentType, data) {
