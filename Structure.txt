@@ -14,9 +14,9 @@ If client choose corect awnser ----->
 request from client to "getMovieInfo" ----->
 respond with all data about 1 random Movie 
 
-__________________IN FUTURE___________________
-Idealy we dont want to send all data about a movie but only the nessesary 
-data needed depending on chosent settings. 
+__________________Response Handeling___________________
+client side choose what to display depinging on settings.
+
 
 
 
