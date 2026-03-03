@@ -3,10 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Higher Lower Game</title>
+    <link rel="styleSheet" href="styleSheet.css">
+  
 </head>
 <body>
-    <h1>Higher or Lower</h1>
-    <h2><a href="homePage.html">Home Page</a></h2>
+    <div class="gamePageContainer">
+        <div class ="previousMovie">
+            <img class="moviePicture" src="BigHL.png" alt="Higher Lower Logo"> <!-- Movie picture pathway {image,alt}-->
+            <div class="pMovieInfo">
+                <p class="movieTitle" id="pMovieTitle">-title-</p>
+                <p class="movieReleaseYear" id="pMovieReleaseYear">-release year-</p>
+                <p class="movieDirector" id="pMovieDirector">-Director-</p>
+                <p class="movieGenre" id="pMovieGenre">-genre-</p>
+                <p class="movieCertificate" id="pMovieCertificate">-age rating-</p>
+                <p class="movieDescription" id="pMovieDescription">Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat suscipit tenetur dignissimos pariatur delectus earum magni ipsam eveniet eius laboriosam deleniti assumenda, minima molestias officiis recusandae, aliquam dolor laudantium incidunt.</p>
+                <p class="movieRating" id="pMovieRating">-rating-</p>
+            </div>
+        </div>
+
+        <div class="scoreContainer">
+            <div class="scoreDiv">
+                <p>Score: </p>
+                <p class="scoreOutput" id="scoreOutput">-//-</p>
+            </div>
+            
+            <button id="higher" class="higherButton">Higher</button>
+            <button id="lower" class="lowerButton">Lower</button>
+            
+            
+        </div>
+        
+        <div class="currentMovie">
+            <img class="moviePicture" src="BigHL.png" alt="-//-"> <!-- Movie picture pathway {image,alt}-->
+            <div class="cMovieInfo">
+                <p class="movieTitle" id="cMovieTitle">-//-</p>
+                <p class="movieReleaseYear" id="cMovieReleaseYear">-//-</p>
+                <p class="movieDirector" id="cMovieDirector">-//-</p>
+                <p class="movieGenre" id="cMovieGenre">-//-</p>
+                <p class="movieCertificate" id="cMovieCertificate">-//-</p>
+                <p class="movieDescription" id="cMovieDescription">Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat suscipit tenetur dignissimos pariatur delectus earum magni ipsam eveniet eius laboriosam deleniti assumenda, minima molestias officiis recusandae, aliquam dolor laudantium incidunt.</p>
+                <p class="movieRating" id="cMovieRating">???</p>
+            </div>
+        </div>
+        
+
+
+    </div>
 </body>
 </html>
+
+
+
+
+<script src="script.js"></script>
