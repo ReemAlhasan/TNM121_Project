@@ -127,7 +127,13 @@ async function routing_getMovieInfo(res) {
     const dbCollection = db.collection(dbImdbCollectionName);
     
     
-    loadIdArray(dbCollection);
+    await loadIdArray(dbCollection);
+    // Error handling i
+    if (loadIdArray == null) {
+        console.error("Error loading id array");
+        sendResponse(res, 500, "text/plain", "Error loading id array");
+        return;
+    }
     // produce random number 
     const randomIndex = Math.floor(Math.random() * idArray.length);
     // get id by random index
