@@ -1,3 +1,11 @@
+____________________TODO_____________________
+    Note: I comented all work in the script.js. It was a function without name containing 
+        funtionalitiz for the settings. But it gave me lots of errror so i just made a 
+        comment so that i could work without it. 
+
+1. The app.js has a incorect sturcture. Rigth now the getMovieInfo and startGame 
+function does the exact same thing but startGame asks for two random Movies. Restructuring of the code is needed. 
+
 
 ______________________API___________________ 
 

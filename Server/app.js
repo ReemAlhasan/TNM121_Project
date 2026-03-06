@@ -141,7 +141,6 @@ async function routing_getMovieInfo(res) {
     // slect document with the random id
     const findQuery = { normalized_id: randomItem.normalized_id };
 
-
     console.log("Querying for Movie with id:", findQuery);
     // fields with value 0: excluded; fields with value 1: included in results   
     // const projectionQuery = { item_results:1, director_results:0, director_id_results:0, actor_results:0, actor_id_results:0, votes:0};    
@@ -159,6 +158,64 @@ async function routing_getMovieInfo(res) {
     sendResponse(res, 200, "application/json", jsonDataAsString);
 }
 
+
+async function routing_startGame(res) {
+    
+
+    // ------------- connect to MongoDB server ---------------------
+    console.log('startGame function is handeling request');
+    // establish an active connection to the specified MongoDB server
+    await dbClient.connect();  
+    
+    
+    // --------------- Get JSON documents ------------------------
+    // select a specified database on the server
+    const db = dbClient.db(dbName);   
+    // select a specified (document) collection in the database                 
+    const dbCollection = db.collection(dbImdbCollectionName);
+    
+    
+    await loadIdArray(dbCollection);
+    // Error handling i
+    if (loadIdArray == null) {
+        console.error("Error loading id array");
+        sendResponse(res, 500, "text/plain", "Error loading id array");
+        return;
+    }
+    // produce random number 
+    let randomIndex = Math.floor(Math.random() * idArray.length);
+    // get id by random index
+    let randomItem = idArray[randomIndex];
+    // slect document with the random id
+    
+
+    // produce random number 
+    let randomIndex2 = Math.floor(Math.random() * idArray.length);
+    // get id by random index
+    let randomItem2 = idArray[randomIndex2];
+
+
+    // slect document with the random id
+    
+    const findQuery = { normalized_id: { $in: [randomItem.normalized_id, randomItem2.normalized_id] } };
+   
+
+    console.log("Querying for Movie with id:", findQuery);
+    // fields with value 0: excluded; fields with value 1: included in results   
+    // const projectionQuery = { item_results:1, director_results:0, director_id_results:0, actor_results:0, actor_id_results:0, votes:0};    
+
+    const projectionQuery = {name: 1 };   //item_results:1, director_results:0, director_id_results:0, actor_results:0, actor_id_results:0, votes:0 
+    // adds all queried documents into a javascript array
+    const findAllResult = await dbCollection.find(findQuery).toArray();        
+    console.log("Found Documents Count:", findAllResult.length);
+
+
+    // a JSON object *cannot* be simply transmitted in a HTTP message's body,
+    // but it needs to be "serialized" (turned into a string) first
+    const jsonDataAsString = JSON.stringify(findAllResult);
+    // send serialized JSON data as MIME type "application/json"
+    sendResponse(res, 200, "application/json", jsonDataAsString);
+}
 //___________________ ADDITIONAL ESSENTIAL FUNCTIONS ____________________
 
 async function loadIdArray(dbCollection) {
