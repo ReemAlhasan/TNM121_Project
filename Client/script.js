@@ -2,22 +2,22 @@ const serverUrl = "http://127.0.0.1:3000";
 
 //___________________ INITIAL LOADING _________________
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("HTML DOM tree loaded, and ready for manipulation.");
+  console.log("HTML DOM tree loaded, and ready for manipulation.");
 
   //------------ Start Game Button ---------------
-      // Get the start game button element on the home page
-      // Add a click event listener to the button
-      // When the button is clicked, navigate to the game page
+  // Get the start game button element on the home page
+  // Add a click event listener to the button
+  // When the button is clicked, navigate to the game page
   const startBtn = document.getElementById('startGame');
   if (startBtn) {
     console.log("Start Game button found, adding click event listener."); // Debug log to confirm button is found
     startBtn.addEventListener('click', (e) => {
       e.preventDefault(); // Prevent default button behavior
       console.log("Start Game button clicked, navigating to game page.");
-    window.location.href = 'gamePage.html'; // Navigate to the game page
+      window.location.href = 'gamePage.html'; // Navigate to the game page
     });
   }
-  
+
 
   //------------ Initialize game page if someone asks for gamePageContainer  ---------------
   const gamePageContainer = document.getElementsByClassName('gamePageContainer');
@@ -27,9 +27,9 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   //------------ Add button functonality ------------------
-   const higtherButton = document.getElementById('higher');
-   const lowerButton = document.getElementById('lower');
-  
+  const higtherButton = document.getElementById('higher');
+  const lowerButton = document.getElementById('lower');
+
   if (higtherButton) {
     console.log("Higher button found, adding click event listener."); // Debug log to confirm button is found
     higtherButton.addEventListener('click', (e) => {
@@ -180,8 +180,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   })();
 */
-  //____________________STATRT GAME _______________________
- async function startGame() {
+//____________________STATRT GAME _______________________
+async function startGame() {
 
   //------------ Fetch movie data from the server ---------------
   const response = await fetch(serverUrl + '/startGame', {
@@ -192,27 +192,31 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   //----------------- Handle response ------------------------------ 
-   response.json().then((jsonBody) => {
+  response.json().then((jsonBody) => {
 
+    // at this stage, the variable jsonBody holds the final HTTP response's body (in JSON) 
+    console.log("The client received a response from the server with JSON data.");
 
-        // at this stage, the variable jsonBody holds the final HTTP response's body (in JSON) 
-        console.log("The client received a response from the server with JSON data.");
-   
-        // Devide josonBody array 
-        let firstMovie = jsonBody[0]; 
-        let secondMovie = jsonBody[1];
-        
-        let cmovietitle = document.getElementById("cMovieTitle");
-        let pmovietitle = document.getElementById("pMovieTitle");
+    // Devide josonBody array 
+    let firstMovie = jsonBody[0];
+    let secondMovie = jsonBody[1];
 
-        cmovietitle.textContent = firstMovie.name;
-        pmovietitle.textContent = secondMovie.name;
+    let cmovietitle = document.getElementById("cMovieTitle");
+    let pmovietitle = document.getElementById("pMovieTitle");
 
-   });
+    const cMoviePicture = document.getElementById("cMoviePicture");
+    const pMoviePicture = document.getElementById("pMoviePicture");
+
+    cmovietitle.textContent = firstMovie.name;
+    pmovietitle.textContent = secondMovie.name;
+    // Calling the API endpoint in server and setting the img src code to the response the server gives. 
+    cMoviePicture.src = serverUrl + "/media/" + firstMovie.normalized_id + ".png";
+    pMoviePicture.src = serverUrl + "/media/" + secondMovie.normalized_id + ".png";
+  });
 }
- 
+
 //____________________ CALCULATE SCORE____________________
-function calcularteScore(button){
+function calcularteScore(button) {
 
   // if the button is higher, 
   // then we will check if the current movie's rating
@@ -234,21 +238,17 @@ async function getMovieData() {
   });
 
   //----------------- Handle response ------------------------------ 
-   response.json().then((jsonBody) => {
+  response.json().then((jsonBody) => {
 
-        // at this stage, the variable jsonBody holds the final HTTP response's body (in JSON)
-        console.log("The client received a response from the server with JSON data.");
- 
-let moviedata = jsonBody[0];
+    // at this stage, the variable jsonBody holds the final HTTP response's body (in JSON)
+    console.log("The client received a response from the server with JSON data.");
+    let moviedata = jsonBody[0];
+    let cmovietitle = document.getElementById("cMovieTitle");
+    let cMoviePicture = document.getElementById("cMoviePicture");
+    cmovietitle.textContent = moviedata.name;
+    // Calling the API endpoint in server and setting the img src code to the response the server gives. 
+    cMoviePicture.src = serverUrl + "/media/" + moviedata.normalized_id + ".png";
 
-        let cmovietitle = document.getElementById("cMovieTitle");
-        
-
-        cmovietitle.textContent = moviedata.name;
-
-
-   });
-
- 
-
+  });
 }
+

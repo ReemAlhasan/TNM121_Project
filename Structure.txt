@@ -4,7 +4,10 @@ ____________________TODO_____________________
         comment so that i could work without it. 
 
 1. The app.js has a incorect sturcture. Rigth now the getMovieInfo and startGame 
-function does the exact same thing but startGame asks for two random Movies. Restructuring of the code is needed. 
+function does the exact same thing but startGame asks for two random Movies. Restructuring of the code is needed.
+2. The array that we make in order to use random id is based on all documents in imbd database. 
+Therefore some movies does not exsist. Should we change that?
+3. score_calculation function is needed. 
 
 
 ______________________API___________________ 
