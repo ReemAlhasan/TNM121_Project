@@ -48,8 +48,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-/*
-(function () {
+
+function markOnStartup () {
     // Mark all settings buttons as checked on startup
     const settingsCheckboxes = [
       'imageShown',
@@ -178,8 +178,8 @@ document.addEventListener("DOMContentLoaded", function () {
       // const state = window.getMovieFilterState();
       // fetchMovies(state);
     });
-  })();
-*/
+  };
+
 //____________________STATRT GAME _______________________
 async function startGame() {
 
