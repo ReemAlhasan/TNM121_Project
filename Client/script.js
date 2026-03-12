@@ -4,6 +4,9 @@ const serverUrl = "http://127.0.0.1:3000";
 document.addEventListener("DOMContentLoaded", function () {
   console.log("HTML DOM tree loaded, and ready for manipulation.");
 
+  markOnStartup(); // Call the function to mark settings buttons as checked and initialize dual-range sliders
+
+
   //------------ Start Game Button ---------------
   // Get the start game button element on the home page
   // Add a click event listener to the button
@@ -172,12 +175,22 @@ function markOnStartup () {
       };
     };
     
-
+    /*
     // Example: listen for changes to drive queries
     document.getElementById('movieFilter').addEventListener('input', () => {
       // const state = window.getMovieFilterState();
       // fetchMovies(state);
     });
+    */
+
+    const movieFilter = document.getElementById('movieFilter');
+
+    if (movieFilter) {
+      movieFilter.addEventListener('input', () => {
+        // filter logic
+      });
+
+      
   };
 
 //____________________STATRT GAME _______________________
@@ -251,4 +264,4 @@ async function getMovieData() {
 
   });
 }
-
+}
