@@ -21,10 +21,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  
 
   //------------ Initialize game page if someone asks for gamePageContainer  ---------------
   const gamePageContainer = document.getElementsByClassName('gamePageContainer');
-  if (gamePageContainer) {
+  if (gamePageContainer.length > 0) {
     console.log("Game page container found, initializing game page.");
     startGame(); // Start the game by fetching movie data and updating the page
   }
@@ -38,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
     higtherButton.addEventListener('click', (e) => {
       e.preventDefault(); // Prevent default button behavior
       console.log("Higher button clicked")
-      calcularteScore("higher");
+      calculateScore("higher");
     });
   }
   if (lowerButton) {
@@ -46,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
     lowerButton.addEventListener('click', (e) => {
       e.preventDefault(); // Prevent default button behavior
       console.log("Lower button clicked")
-      calcularteScore(lowerButton);
+      calculateScore("lower");
     });
   }
 });
@@ -142,6 +143,11 @@ function markOnStartup () {
     function attach(kind) {
       const e = els[kind];
 
+      //för buggar 
+      if (!e.min || !e.max || !e.hl || !e.out || !e.box) {
+    return; // bara hoppa över
+  }
+
       // initialization
       updateDual(kind);
 
@@ -160,8 +166,11 @@ function markOnStartup () {
       e.max.addEventListener('keyup', off);
     }
 
-    attach('year');
-    attach('runtime');
+    //--------------filter 
+  if (document.getElementById('yearMin')) {
+  attach('year');
+  attach('runtime');
+}
 
     // Optional: expose current state to parent app
     window.getMovieFilterState = function () {
@@ -189,9 +198,8 @@ function markOnStartup () {
       movieFilter.addEventListener('input', () => {
         // filter logic
       });
-
-      
-  };
+}
+}
 
 //____________________STATRT GAME _______________________
 async function startGame() {
@@ -229,7 +237,7 @@ async function startGame() {
 }
 
 //____________________ CALCULATE SCORE____________________
-function calcularteScore(button) {
+function calculateScore(button) {
 
   // if the button is higher, 
   // then we will check if the current movie's rating
@@ -264,4 +272,4 @@ async function getMovieData() {
 
   });
 }
-}
+
