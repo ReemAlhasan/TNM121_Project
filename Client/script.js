@@ -52,29 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-//____________________High Contrast Mode _______________________
-const btn = document.getElementById("contrastBtn");
 
-btn.addEventListener("click", () => {
-  document.body.classList.toggle("high-contrast");
-
-  // Save preference
-  const isOn = document.body.classList.contains("high-contrast");
-  localStorage.setItem("highContrast", isOn);
-});
-
-function toggleHighContrast() {
-    document.body.classList.toggle("high-contrast");
-
-    const isOn = document.body.classList.contains("high-contrast");
-    localStorage.setItem("highContrast", isOn);
-  }
-
-  window.addEventListener("DOMContentLoaded", () => {
-    if (localStorage.getItem("highContrast") === "true") {
-      document.body.classList.add("high-contrast");
-    }
-  });
 
 //------------------globala Variablar----------
 let currentMovie = null;
@@ -363,6 +341,24 @@ async function getMovieData() {
     // Calling the API endpoint in server and setting the img src code to the response the server gives. 
     cMoviePicture.src = serverUrl + "/media/" + currentMovie.normalized_id + ".png";
 
-  });
-}
+  });}
+  
+//____________________High Contrast Mode _______________________
+const btn = document.getElementById("contrastBtn");
 
+if (btn) {  // Only add listener if button exists
+  btn.addEventListener("click", () => {
+    document.body.classList.toggle("high-contrast");
+
+    // save preference
+    const isHighContrast = document.body.classList.contains("high-contrast");
+    localStorage.setItem("highContrast", isHighContrast);
+  });}
+
+// On page load, apply saved preference
+window.addEventListener("DOMContentLoaded", () => {
+  const savedPreference = localStorage.getItem("highContrast");
+  if (savedPreference === "true") {
+    document.body.classList.add("high-contrast");
+  }
+});
