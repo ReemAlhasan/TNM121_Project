@@ -16,7 +16,7 @@
 .high-contrast {
   --bg: rgb(0,3,20);
   --text: #F2CA19;
-    --primary-gradient: #FF00BD;
+  --primary-gradient: #E11845;
 }
 
 body {
@@ -92,7 +92,7 @@ h1{
     letter-spacing: 1px;
 }
 
-.AboutUsButton:hover, .AboutUsButton:focus, .startGameButton:hover, .startGameButton:focus, .menu-container:hover, .menu-container:focus, .higherButton:hover, .higherButton:focus, .lowerButton:hover, .lowerButton:focus {
+.AboutUsButton:hover, .AboutUsButton:focus, .startGameButton:hover, .HighContrastButton:hover, .HighContrastButton:focus .startGameButton:focus, .menu-container:hover, .menu-container:focus, .higherButton:hover, .higherButton:focus, .lowerButton:hover, .lowerButton:focus {
     transform: translateY(-2px) scale(1.04);
     outline: none;
 }
@@ -184,10 +184,6 @@ button {
     color:red;
     border-radius: 5px;
     cursor: pointer;
-}
-
-button:hover {
-    background-color: rgb(241, 170, 18);
 }
 
 /* Toggle switch*/
