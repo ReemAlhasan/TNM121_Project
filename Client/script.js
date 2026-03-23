@@ -52,6 +52,11 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+//------------------globala Variablar----------
+let currentMovie = null;
+let previousMovie = null;
+let score = 0;
+
 
 function markOnStartup () {
     // Mark all settings buttons as checked on startup
@@ -218,6 +223,17 @@ async function startGame() {
     // at this stage, the variable jsonBody holds the final HTTP response's body (in JSON) 
     console.log("The client received a response from the server with JSON data.");
 
+    //set score container 
+    score = 0;
+    const scoreconatiner = document.getElementById("scoreOutput");
+    if (scoreconatiner) {
+    scoreconatiner.textContent = score;
+    }
+
+    //set global varibles 
+    previousMovie = jsonBody[0];
+    currentMovie = jsonBody[1];
+
     // Devide josonBody array 
     let firstMovie = jsonBody[0];
     let secondMovie = jsonBody[1];
@@ -237,13 +253,56 @@ async function startGame() {
 }
 
 //____________________ CALCULATE SCORE____________________
-function calculateScore(button) {
+function calculateScore(choice) {
 
   // if the button is higher, 
   // then we will check if the current movie's rating
   // is higher than the previous one. 
 
-  getMovieData();
+
+ 
+
+  //bara debugg grej
+   if (!currentMovie || !previousMovie) {
+    console.log("Movies not loaded yet");
+    return;
+  }
+
+  const currentRating = currentMovie.rating;
+  const previousRating = previousMovie.rating;
+  const scoreconatiner = document.getElementById("scoreOutput");
+
+  let isCorrect = false;
+
+  // setts isCooret to true or false
+  if (choice === "higher") {
+    isCorrect = currentRating >= previousRating;
+  } else if (choice === "lower") {
+    isCorrect = currentRating <= previousRating;
+  }
+
+  if (isCorrect) {
+    score++;
+    console.log("Score:", score);
+
+    scoreconatiner.textContent = score;
+
+    // shift movies
+    previousMovie = currentMovie;
+
+    // get a new movie
+    getMovieData();
+
+  } else {
+    console.log("Final score:", score);
+
+    alert("LOSER, Game over! Your score: " + score);
+
+    score = 0;
+
+    // restart game
+    startGame();
+  }
 
 }
 
@@ -263,12 +322,12 @@ async function getMovieData() {
 
     // at this stage, the variable jsonBody holds the final HTTP response's body (in JSON)
     console.log("The client received a response from the server with JSON data.");
-    let moviedata = jsonBody[0];
+    currentMovie = jsonBody[0];
     let cmovietitle = document.getElementById("cMovieTitle");
     let cMoviePicture = document.getElementById("cMoviePicture");
-    cmovietitle.textContent = moviedata.name;
+    cmovietitle.textContent = currentMovie.name;
     // Calling the API endpoint in server and setting the img src code to the response the server gives. 
-    cMoviePicture.src = serverUrl + "/media/" + moviedata.normalized_id + ".png";
+    cMoviePicture.src = serverUrl + "/media/" + currentMovie.normalized_id + ".png";
 
   });
 }
