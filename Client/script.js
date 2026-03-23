@@ -1,267 +1,339 @@
 const serverUrl = "http://127.0.0.1:3000";
 
+// Tracks the current movie's rating so we can compare on next guess
+let currentMovieRating = null;
+let score = 0;
+
 //___________________ INITIAL LOADING _________________
 document.addEventListener("DOMContentLoaded", function () {
   console.log("HTML DOM tree loaded, and ready for manipulation.");
 
-  markOnStartup(); // Call the function to mark settings buttons as checked and initialize dual-range sliders
-
+  markOnStartup();
 
   //------------ Start Game Button ---------------
-  // Get the start game button element on the home page
-  // Add a click event listener to the button
-  // When the button is clicked, navigate to the game page
   const startBtn = document.getElementById('startGame');
   if (startBtn) {
-    console.log("Start Game button found, adding click event listener."); // Debug log to confirm button is found
     startBtn.addEventListener('click', (e) => {
-      e.preventDefault(); // Prevent default button behavior
-      console.log("Start Game button clicked, navigating to game page.");
-      window.location.href = 'gamePage.html'; // Navigate to the game page
+      e.preventDefault();
+
+      // Save all toggle settings to localStorage before navigating
+      const settings = {
+        imageShown:       document.getElementById('imageShown')?.checked ?? true,
+        genreShown:       document.getElementById('genreShown')?.checked ?? true,
+        certificateShown: document.getElementById('certificateShown')?.checked ?? true,
+        directorShown:    document.getElementById('directorShown')?.checked ?? true,
+        descriptionShown: document.getElementById('descriptionShown')?.checked ?? true,
+        releaseYearShown: document.getElementById('releaseYearShown')?.checked ?? true,
+        genre:            document.getElementById('genre')?.value || null,
+        certificate:      document.getElementById('certificate')?.value || null,
+        yearMin:          Number(document.getElementById('yearMin')?.value) || 1960,
+        yearMax:          Number(document.getElementById('yearMax')?.value) || 2026,
+        runtimeMin:       Number(document.getElementById('runtimeMin')?.value) || 0,
+        runtimeMax:       Number(document.getElementById('runtimeMax')?.value) || 500,
+      };
+
+      localStorage.setItem('gameSettings', JSON.stringify(settings));
+      console.log("Settings saved to localStorage:", settings);
+      window.location.href = 'gamePage.html';
     });
   }
 
-
-  //------------ Initialize game page if someone asks for gamePageContainer  ---------------
-  const gamePageContainer = document.getElementsByClassName('gamePageContainer');
+  //------------ Initialize game page ---------------
+  const gamePageContainer = document.getElementsByClassName('gamePageContainer')[0];
   if (gamePageContainer) {
     console.log("Game page container found, initializing game page.");
-    startGame(); // Start the game by fetching movie data and updating the page
+    applySettings();
+    startGame();
   }
 
-  //------------ Add button functonality ------------------
-  const higtherButton = document.getElementById('higher');
-  const lowerButton = document.getElementById('lower');
+  //------------ Higher / Lower buttons ---------------
+  const higherButton = document.getElementById('higher');
+  const lowerButton  = document.getElementById('lower');
 
-  if (higtherButton) {
-    console.log("Higher button found, adding click event listener."); // Debug log to confirm button is found
-    higtherButton.addEventListener('click', (e) => {
-      e.preventDefault(); // Prevent default button behavior
-      console.log("Higher button clicked")
-      calcularteScore("higher");
+  if (higherButton) {
+    higherButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      calculateScore("higher");
     });
   }
   if (lowerButton) {
-    console.log("Lower button found, adding click event listener."); // Debug log to confirm button is found
     lowerButton.addEventListener('click', (e) => {
-      e.preventDefault(); // Prevent default button behavior
-      console.log("Lower button clicked")
-      calcularteScore(lowerButton);
+      e.preventDefault();
+      calculateScore("lower");
     });
   }
 });
 
 
-function markOnStartup () {
-    // Mark all settings buttons as checked on startup
-    const settingsCheckboxes = [
-      'imageShown',
-      'genreShown',
-      'certificateShown',
-      'directorShown',
-      'descriptionShown',
-      'releaseYearShown'
-    ];
-    
-    settingsCheckboxes.forEach(id => {
-      const checkbox = document.getElementById(id);
-      if (checkbox) {
-        checkbox.checked = true;
-      }
-    });
+//___________________ APPLY SETTINGS ON GAME PAGE ___________________
+function applySettings() {
+  const raw = localStorage.getItem('gameSettings');
+  if (!raw) {
+    console.log("No settings found in localStorage, using defaults (all shown).");
+    return;
+  }
 
-    // Optional minimum gaps (set to 0 to allow handles to meet)
-    const GAPS = {
-      year: 0,      // years
-      runtime: 0    // minutes
-    };
+  const settings = JSON.parse(raw);
+  console.log("Applying settings:", settings);
 
-    const els = {
-      year: {
-        min: document.getElementById('yearMin'),
-        max: document.getElementById('yearMax'),
-        out: document.getElementById('yearRangeValue'),
-        hl:  document.getElementById('yearHighlight'),
-        box: document.querySelector('.dual-range[data-kind="year"]')
-      },
-      runtime: {
-        min: document.getElementById('runtimeMin'),
-        max: document.getElementById('runtimeMax'),
-        out: document.getElementById('runtimeRangeValue'),
-        hl:  document.getElementById('runtimeHighlight'),
-        box: document.querySelector('.dual-range[data-kind="runtime"]')
-      }
-    };
+  function setVisible(elementId, isVisible) {
+    const el = document.getElementById(elementId);
+    if (el) el.style.display = isVisible ? '' : 'none';
+  }
 
-    function percent(value, min, max) {
-      return ((value - min) / (max - min)) * 100;
+  setVisible('pMoviePicture',     settings.imageShown);
+  setVisible('cMoviePicture',     settings.imageShown);
+
+  setVisible('pMovieGenre',       settings.genreShown);
+  setVisible('cMovieGenre',       settings.genreShown);
+
+  setVisible('pMovieCertificate', settings.certificateShown);
+  setVisible('cMovieCertificate', settings.certificateShown);
+
+  setVisible('pMovieDirector',    settings.directorShown);
+  setVisible('cMovieDirector',    settings.directorShown);
+
+  setVisible('pMovieDescription', settings.descriptionShown);
+  setVisible('cMovieDescription', settings.descriptionShown);
+
+  setVisible('pMovieReleaseYear', settings.releaseYearShown);
+  setVisible('cMovieReleaseYear', settings.releaseYearShown);
+}
+
+
+//___________________ MARK ON STARTUP ___________________
+function markOnStartup() {
+  const settingsCheckboxes = [
+    'imageShown', 'genreShown', 'certificateShown',
+    'directorShown', 'descriptionShown', 'releaseYearShown'
+  ];
+  settingsCheckboxes.forEach(id => {
+    const checkbox = document.getElementById(id);
+    if (checkbox) checkbox.checked = true;
+  });
+
+  const GAPS = { year: 0, runtime: 0 };
+  const els = {
+    year: {
+      min: document.getElementById('yearMin'),
+      max: document.getElementById('yearMax'),
+      out: document.getElementById('yearRangeValue'),
+      hl:  document.getElementById('yearHighlight'),
+      box: document.querySelector('.dual-range[data-kind="year"]')
+    },
+    runtime: {
+      min: document.getElementById('runtimeMin'),
+      max: document.getElementById('runtimeMax'),
+      out: document.getElementById('runtimeRangeValue'),
+      hl:  document.getElementById('runtimeHighlight'),
+      box: document.querySelector('.dual-range[data-kind="runtime"]')
     }
-
-    function updateDual(kind, changed) {
-      const e = els[kind];
-      const minAttr = Number(e.min.min);
-      const maxAttr = Number(e.min.max);
-      const gap = GAPS[kind] || 0;
-
-      let vMin = Number(e.min.value);
-      let vMax = Number(e.max.value);
-
-      if (changed === 'min') {
-        if (vMin > vMax - gap) { vMin = vMax - gap; e.min.value = vMin; }
-      } else if (changed === 'max') {
-        if (vMax < vMin + gap) { vMax = vMin + gap; e.max.value = vMax; }
-      } else {
-        // Initial clamp just in case
-        if (vMin > vMax - gap) { vMin = vMax - gap; e.min.value = vMin; }
-        if (vMax < vMin + gap) { vMax = vMin + gap; e.max.value = vMax; }
-      }
-
-      // Update the highlight bar
-      const leftPct = percent(vMin, minAttr, maxAttr);
-      const rightPct = percent(vMax, minAttr, maxAttr);
-      e.hl.style.left = leftPct + '%';
-      e.hl.style.width = (rightPct - leftPct) + '%';
-
-      // Update text output
-      e.out.textContent = `${e.min.value}–${e.max.value}`;
-
-      // Accessibility
-      e.min.setAttribute('aria-valuenow', e.min.value);
-      e.max.setAttribute('aria-valuenow', e.max.value);
-
-      // Ensure the thumb being dragged is above the other when they meet
-      if (changed === 'min') {
-        e.min.style.zIndex = 3;
-        e.max.style.zIndex = 2;
-      } else if (changed === 'max') {
-        e.max.style.zIndex = 3;
-        e.min.style.zIndex = 2;
-      }
-    }
-
-    function attach(kind) {
-      const e = els[kind];
-
-      // initialization
-      updateDual(kind);
-
-      // interaction
-      const onMin = () => { e.box.classList.add('is-active'); updateDual(kind, 'min'); };
-      const onMax = () => { e.box.classList.add('is-active'); updateDual(kind, 'max'); };
-      const off = () => e.box.classList.remove('is-active');
-
-      e.min.addEventListener('input', onMin);
-      e.max.addEventListener('input', onMax);
-      e.min.addEventListener('change', off);
-      e.max.addEventListener('change', off);
-      e.min.addEventListener('pointerup', off);
-      e.max.addEventListener('pointerup', off);
-      e.min.addEventListener('keyup', off);
-      e.max.addEventListener('keyup', off);
-    }
-
-    attach('year');
-    attach('runtime');
-
-    // Optional: expose current state to parent app
-    window.getMovieFilterState = function () {
-      return {
-        genre: document.getElementById('genreSelect').value || null,
-        certificate: document.getElementById('certSelect').value, // 'all' | '7' | '12' | '14' | '18'
-        releaseYearMin: Number(els.year.min.value),
-        releaseYearMax: Number(els.year.max.value),
-        runtimeMin: Number(els.runtime.min.value),
-        runtimeMax: Number(els.runtime.max.value)
-      };
-    };
-    
-    /*
-    // Example: listen for changes to drive queries
-    document.getElementById('movieFilter').addEventListener('input', () => {
-      // const state = window.getMovieFilterState();
-      // fetchMovies(state);
-    });
-    */
-
-    const movieFilter = document.getElementById('movieFilter');
-
-    if (movieFilter) {
-      movieFilter.addEventListener('input', () => {
-        // filter logic
-      });
-
-      
   };
 
-//____________________STATRT GAME _______________________
-async function startGame() {
+  if (!els.year.min || !els.runtime.min) return;
 
-  //------------ Fetch movie data from the server ---------------
+  function percent(value, min, max) {
+    return ((value - min) / (max - min)) * 100;
+  }
+
+  function updateDual(kind, changed) {
+    const e = els[kind];
+    const minAttr = Number(e.min.min);
+    const maxAttr = Number(e.min.max);
+    const gap = GAPS[kind] || 0;
+    let vMin = Number(e.min.value);
+    let vMax = Number(e.max.value);
+
+    if (changed === 'min') {
+      if (vMin > vMax - gap) { vMin = vMax - gap; e.min.value = vMin; }
+    } else if (changed === 'max') {
+      if (vMax < vMin + gap) { vMax = vMin + gap; e.max.value = vMax; }
+    } else {
+      if (vMin > vMax - gap) { vMin = vMax - gap; e.min.value = vMin; }
+      if (vMax < vMin + gap) { vMax = vMin + gap; e.max.value = vMax; }
+    }
+
+    const leftPct  = percent(vMin, minAttr, maxAttr);
+    const rightPct = percent(vMax, minAttr, maxAttr);
+    e.hl.style.left  = leftPct + '%';
+    e.hl.style.width = (rightPct - leftPct) + '%';
+    e.out.textContent = e.min.value + '\u2013' + e.max.value;
+    e.min.setAttribute('aria-valuenow', e.min.value);
+    e.max.setAttribute('aria-valuenow', e.max.value);
+
+    if (changed === 'min')      { e.min.style.zIndex = 3; e.max.style.zIndex = 2; }
+    else if (changed === 'max') { e.max.style.zIndex = 3; e.min.style.zIndex = 2; }
+  }
+
+  function attach(kind) {
+    const e = els[kind];
+    updateDual(kind);
+    const onMin = () => { e.box.classList.add('is-active');    updateDual(kind, 'min'); };
+    const onMax = () => { e.box.classList.add('is-active');    updateDual(kind, 'max'); };
+    const off   = () => e.box.classList.remove('is-active');
+    e.min.addEventListener('input',    onMin);
+    e.max.addEventListener('input',    onMax);
+    e.min.addEventListener('change',   off);
+    e.max.addEventListener('change',   off);
+    e.min.addEventListener('pointerup',off);
+    e.max.addEventListener('pointerup',off);
+    e.min.addEventListener('keyup',    off);
+    e.max.addEventListener('keyup',    off);
+  }
+
+  attach('year');
+  attach('runtime');
+
+  window.getMovieFilterState = function () {
+    return {
+      genre:          document.getElementById('genre').value || null,
+      certificate:    document.getElementById('certificate').value || null,
+      releaseYearMin: Number(els.year.min.value),
+      releaseYearMax: Number(els.year.max.value),
+      runtimeMin:     Number(els.runtime.min.value),
+      runtimeMax:     Number(els.runtime.max.value)
+    };
+  };
+}
+
+
+//____________________ START GAME _______________________
+async function startGame() {
+  console.log("startGame() called, fetching two random movies...");
+
   const response = await fetch(serverUrl + '/startGame', {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    }
+    headers: { 'Content-Type': 'application/json' }
   });
 
-  //----------------- Handle response ------------------------------ 
   response.json().then((jsonBody) => {
+    console.log("Received two movies from server.");
+    let previousMovie = jsonBody[0];
+    let currentMovie  = jsonBody[1];
 
-    // at this stage, the variable jsonBody holds the final HTTP response's body (in JSON) 
-    console.log("The client received a response from the server with JSON data.");
+    currentMovieRating = currentMovie.rating;
 
-    // Devide josonBody array 
-    let firstMovie = jsonBody[0];
-    let secondMovie = jsonBody[1];
+    document.getElementById("pMovieTitle").textContent       = previousMovie.name;
+    document.getElementById("cMovieTitle").textContent       = currentMovie.name;
+    document.getElementById("pMoviePicture").src             = serverUrl + "/media/" + previousMovie.normalized_id + ".png";
+    document.getElementById("cMoviePicture").src             = serverUrl + "/media/" + currentMovie.normalized_id  + ".png";
+    document.getElementById("pMovieRating").textContent      = previousMovie.rating;
+    document.getElementById("cMovieRating").textContent      = "???";
+    document.getElementById("pMovieReleaseYear").textContent = previousMovie.year;
+    document.getElementById("cMovieReleaseYear").textContent = currentMovie.year;
+    document.getElementById("pMovieDirector").textContent    = previousMovie.director ? previousMovie.director.join(", ") : "N/A";
+    document.getElementById("cMovieDirector").textContent    = currentMovie.director  ? currentMovie.director.join(", ")  : "N/A";
+    document.getElementById("pMovieGenre").textContent       = previousMovie.genre    ? previousMovie.genre.join(", ")    : "N/A";
+    document.getElementById("cMovieGenre").textContent       = currentMovie.genre     ? currentMovie.genre.join(", ")     : "N/A";
+    document.getElementById("pMovieCertificate").textContent = previousMovie.certificate || "N/A";
+    document.getElementById("cMovieCertificate").textContent = currentMovie.certificate  || "N/A";
+    document.getElementById("pMovieDescription").textContent = previousMovie.description || "N/A";
+    document.getElementById("cMovieDescription").textContent = currentMovie.description  || "N/A";
 
-    let cmovietitle = document.getElementById("cMovieTitle");
-    let pmovietitle = document.getElementById("pMovieTitle");
-
-    const cMoviePicture = document.getElementById("cMoviePicture");
-    const pMoviePicture = document.getElementById("pMoviePicture");
-
-    cmovietitle.textContent = firstMovie.name;
-    pmovietitle.textContent = secondMovie.name;
-    // Calling the API endpoint in server and setting the img src code to the response the server gives. 
-    cMoviePicture.src = serverUrl + "/media/" + firstMovie.normalized_id + ".png";
-    pMoviePicture.src = serverUrl + "/media/" + secondMovie.normalized_id + ".png";
+    score = 0;
+    document.getElementById("scoreOutput").textContent = score;
   });
 }
 
-//____________________ CALCULATE SCORE____________________
-function calcularteScore(button) {
 
-  // if the button is higher, 
-  // then we will check if the current movie's rating
-  // is higher than the previous one. 
+//____________________ CALCULATE SCORE ____________________
+function calculateScore(guess) {
+  const previousRating      = parseFloat(document.getElementById("pMovieRating").textContent);
+  const actualCurrentRating = currentMovieRating;
 
-  getMovieData();
+  if (actualCurrentRating === null) { return; }
 
+  const isCorrect =
+    (guess === "higher" && actualCurrentRating >= previousRating) ||
+    (guess === "lower"  && actualCurrentRating <= previousRating);
+
+  if (isCorrect) {
+    score++;
+    document.getElementById("scoreOutput").textContent = score;
+    console.log("Correct! Score:", score);
+    getMovieData();
+  } else {
+    console.log("Wrong! Game over. Final score:", score);
+    showGameOver();
+  }
 }
 
-//____________________ FETCH MOVIE DATA _______________________
-async function getMovieData() {
 
-  //------------ Fetch movie data from the server ---------------
+//____________________ FETCH NEXT MOVIE _______________________
+async function getMovieData() {
   const response = await fetch(serverUrl + '/getMovieInfo', {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    }
+    headers: { 'Content-Type': 'application/json' }
   });
 
-  //----------------- Handle response ------------------------------ 
   response.json().then((jsonBody) => {
+    let newMovie = jsonBody[0];
 
-    // at this stage, the variable jsonBody holds the final HTTP response's body (in JSON)
-    console.log("The client received a response from the server with JSON data.");
-    let moviedata = jsonBody[0];
-    let cmovietitle = document.getElementById("cMovieTitle");
-    let cMoviePicture = document.getElementById("cMoviePicture");
-    cmovietitle.textContent = moviedata.name;
-    // Calling the API endpoint in server and setting the img src code to the response the server gives. 
-    cMoviePicture.src = serverUrl + "/media/" + moviedata.normalized_id + ".png";
+    // Slide current movie into previous slot
+    document.getElementById("pMovieTitle").textContent       = document.getElementById("cMovieTitle").textContent;
+    document.getElementById("pMoviePicture").src             = document.getElementById("cMoviePicture").src;
+    document.getElementById("pMovieRating").textContent      = currentMovieRating;
+    document.getElementById("pMovieReleaseYear").textContent = document.getElementById("cMovieReleaseYear").textContent;
+    document.getElementById("pMovieDirector").textContent    = document.getElementById("cMovieDirector").textContent;
+    document.getElementById("pMovieGenre").textContent       = document.getElementById("cMovieGenre").textContent;
+    document.getElementById("pMovieCertificate").textContent = document.getElementById("cMovieCertificate").textContent;
+    document.getElementById("pMovieDescription").textContent = document.getElementById("cMovieDescription").textContent;
 
+    // Load new current movie
+    document.getElementById("cMovieTitle").textContent       = newMovie.name;
+    document.getElementById("cMoviePicture").src             = serverUrl + "/media/" + newMovie.normalized_id + ".png";
+    document.getElementById("cMovieRating").textContent      = "???";
+    document.getElementById("cMovieReleaseYear").textContent = newMovie.year;
+    document.getElementById("cMovieDirector").textContent    = newMovie.director ? newMovie.director.join(", ") : "N/A";
+    document.getElementById("cMovieGenre").textContent       = newMovie.genre    ? newMovie.genre.join(", ")    : "N/A";
+    document.getElementById("cMovieCertificate").textContent = newMovie.certificate || "N/A";
+    document.getElementById("cMovieDescription").textContent = newMovie.description || "N/A";
+
+    currentMovieRating = newMovie.rating;
   });
 }
+
+
+//____________________ GAME OVER POPUP ____________________
+function showGameOver() {
+  document.getElementById("cMovieRating").textContent = currentMovieRating;
+
+  const overlay = document.createElement('div');
+  overlay.id = 'gameOverOverlay';
+  overlay.style.cssText = `
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8); display: flex; justify-content: center;
+    align-items: center; z-index: 999;
+  `;
+  overlay.innerHTML = `
+    <div style="
+      background: linear-gradient(90deg, #910915 0%, #ff3503 100%);
+      border-radius: 20px; padding: 40px; text-align: center;
+      color: white; font-family: Arial, sans-serif; max-width: 400px;
+    ">
+      <h2>Game Over!</h2>
+      <p style="font-size: 24px;">You got <strong>${score}</strong> correct!</p>
+      <button onclick="restartGame()" style="
+        margin: 10px; padding: 12px 24px; border-radius: 20px;
+        border: none; background: white; color: red;
+        font-size: 18px; font-weight: bold; cursor: pointer;
+      ">Play Again</button>
+      <button onclick="window.location.href='homePage.html'" style="
+        margin: 10px; padding: 12px 24px; border-radius: 20px;
+        border: none; background: white; color: red;
+        font-size: 18px; font-weight: bold; cursor: pointer;
+      ">New Settings</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+}
+
+
+//____________________ RESTART GAME ____________________
+function restartGame() {
+  const overlay = document.getElementById('gameOverOverlay');
+  if (overlay) overlay.remove();
+  score = 0;
+  currentMovieRating = null;
+  startGame();
 }

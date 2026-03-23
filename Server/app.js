@@ -223,4 +223,3 @@ process.on("SIGINT", async () => {
     await dbClient.close();
     process.exit(0);
 });
-``

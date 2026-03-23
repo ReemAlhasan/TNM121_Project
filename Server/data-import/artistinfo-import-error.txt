@@ -1,1 +1,1 @@
-MongoBulkWriteError: E11000 duplicate key error collection: tnm121-project.actorinfo index: _id_ dup key: { _id: "nm3485845" }
+MongoServerSelectionError: connect ECONNREFUSED 127.0.0.1:27017

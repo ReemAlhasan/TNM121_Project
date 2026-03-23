@@ -1,1 +1,1 @@
-MongoBulkWriteError: E11000 duplicate key error collection: tnm121-project.bechdel index: _id_ dup key: { _id: "9602" }
+MongoServerSelectionError: connect ECONNREFUSED 127.0.0.1:27017

@@ -39,6 +39,9 @@ h1{
     grid-column: 3;
     justify-self: end;
     align-self: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 120px;
     height: 40px;
     padding: 0;
@@ -51,6 +54,7 @@ h1{
     transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
     margin: 0 10px;
     letter-spacing: 1px;
+    text-decoration: none;
 }
 
 .AboutUsButton:hover, .AboutUsButton:focus, .startGameButton:hover, .startGameButton:focus, .menu-container:hover, .menu-container:focus, .higherButton:hover, .higherButton:focus, .lowerButton:hover, .lowerButton:focus {
@@ -497,4 +501,3 @@ input:checked + .slider:before {
     width: 50%;
     border-color: yellow;
 }
-
