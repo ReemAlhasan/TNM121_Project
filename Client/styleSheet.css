@@ -58,7 +58,6 @@ h1{
 .HighContrastButton{
     grid-column: 1;
     justify-self: start;
-    align-self: left;
     width: auto;
     height: 40px;
     padding: 10px;
@@ -76,7 +75,6 @@ h1{
 .AboutUsButton {
     grid-column: 3;
     justify-self: end;
-    align-self: right;
     width: 120px;
     height: 40px;
     padding: 0;
@@ -123,31 +121,26 @@ h1{
 .enableSettingsContainer {
     display: grid;
     grid-template-columns: 1fr 1fr 2fr 1fr 2fr 1fr 2fr 1fr;
-    grid-template-rows: 1;
 }
 
 .enableSettingsButton1{
     grid-column: 3;
     justify-self: left;
-    align-self: left   ;
 }
 
 .enableSettingsButton2{
     grid-column: 5;
     justify-self: left;
-    align-self: left;
 }
 
 .enableSettingsButton3{
     grid-column: 7;
     justify-self: left;
-    align-self: left;
 }
 
 .enableSettingsText1{
     grid-column: 2;
     justify-self: start;
-    align-self: top;
     padding-right: 10px;
     padding-left: 10px;
     font-size: 18px;
@@ -156,7 +149,6 @@ h1{
 .enableSettingsText2{
     grid-column: 4;
     justify-self: start;
-    align-self: top;
     padding-right: 10px;
     padding-left: 10px;
     font-size: 18px;
@@ -165,7 +157,6 @@ h1{
 .enableSettingsText3{
     grid-column: 6;
     justify-self: start;
-    align-self: top;
     padding-right: 10px;
     padding-left: 10px;
     font-size: 18px;
@@ -213,7 +204,6 @@ button:hover {
     left: 0;
     right: 0;
     bottom: 0;
-    transition: .3;
 }
 
 .slider:before {
@@ -240,8 +230,8 @@ input:checked + .slider:before {
 .advancedSettingsContainer {
     display: grid;
     grid-template-columns: 1fr 0.5fr 1fr;
-    grid-template-rows: 1;
 }
+
 .genreSelect {
     margin-bottom: 15px;
     grid-column: 1;
@@ -254,13 +244,6 @@ input:checked + .slider:before {
     grid-column: 3;
     justify-self: start;
 }
-
-
-
-
-
-
-
 
 /* Container */
 .movie-filter {
@@ -443,20 +426,20 @@ input:checked + .slider:before {
 }
 
 .previousMovie{
-    grid:1;
+    grid-column: 1;
 }
 
 .scoreContainer{
-    grid:2;
+    grid-column: 2;
 }
 
 .currentMovie{
-    grid:3;
+    grid-column: 3;
     align-items: center;
 }
 
 .scoreDiv {
-    grid:2;
+    grid-column: 2;
     align-self: center;
     align-content: center;
     text-align: center;
@@ -484,7 +467,7 @@ input:checked + .slider:before {
 
 .higherButton, .lowerButton {
     align-self: center;
-    grid:2;
+    grid-column:2;
     height: 120px;
     padding: 0;
     border: none;
