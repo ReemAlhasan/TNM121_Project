@@ -1,7 +1,27 @@
+:root {
+  --bg: rgb(0, 3, 20);
+  --text: white;
+
+  /* Primary gradient used multiple times */
+  --primary-gradient: linear-gradient(90deg, #910915 0%, #ff3503 100%);
+
+  /* Button background */
+  --button-bg: var(--primary-gradient);
+
+  /* Highlight used in sliders etc. */
+  --accent: rgb(45, 105, 77);
+}
+
+/* High contrast overrides */
+.high-contrast {
+  --bg: rgb(0, 3, 20);
+  --text: #F2CA19;
+}
+
 body {
     font-family: Arial, sans-serif;
-    background-color: rgb(0, 3, 20);
-    color:white;
+    background: var(--bg);
+    color: var(--text);
 }
 
 /*
@@ -35,16 +55,34 @@ h1{
     margin-top: 10px;
 }
 
+.HighContrastButton {
+    grid-column: 1;
+    justify-self: left;
+    align-self: left;
+    width: auto;
+    height: 40px;
+    padding: 10px;
+    border-radius: 40px;
+    background: var(--primary-gradient);
+    color: var(--text);
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+    margin: 0 10px;
+    letter-spacing: 1px;
+}
+
 .AboutUsButton {
     grid-column: 3;
     justify-self: end;
     align-self: center;
-    width: 120px;
+    width: auto;
     height: 40px;
-    padding: 0;
+    padding: 10px;
     border-radius: 40px;
-    background: linear-gradient(90deg, #910915 0%, #ff3503 100%);
-    color: #fff;
+    background: var(--primary-gradient);
+    color: var(--text);
     font-size: 20px;
     font-weight: bold;
     cursor: pointer;
@@ -75,7 +113,7 @@ h1{
 .menu-container{
     width: 80%;
     padding: 20px;
-    background: linear-gradient(90deg, #910915 0%, #ff3503 100%);
+    background: var(--primary-gradient);
     margin: 50px auto;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -377,7 +415,7 @@ input:checked + .slider:before {
     padding: 0;
     border: none;
     border-radius: 40px;
-    background: linear-gradient(90deg, #910915 0%, #ff3503 100%);
+    background: var(--primary-gradient);
     color: #fff;
     font-size: 20px;
     font-weight: bold;
@@ -424,7 +462,7 @@ input:checked + .slider:before {
     height: 120px;
     border: none;
     border-radius: 40px;
-    background: linear-gradient(90deg, #910915 0%, #ff3503 100%);
+    background: var(--primary-gradient);
     color: #fff;
     font-size: 20px;
     font-weight: bold;
@@ -450,7 +488,7 @@ input:checked + .slider:before {
     padding: 0;
     border: none;
     border-radius: 40px;
-    background: linear-gradient(90deg, #910915 0%, #ff3503 100%);
+    background: var(--primary-gradient);
     color: #fff;
     font-size: 20px;
     font-weight: bold;
@@ -476,7 +514,7 @@ input:checked + .slider:before {
     height: 50%;
     border: none;
     border-radius: 40px;
-    background: linear-gradient(90deg, #910915 0%, #ff3503 100%);
+    background: var(--primary-gradient);
     color: #fff;
     font-size: 20px;
     font-weight: bold;
