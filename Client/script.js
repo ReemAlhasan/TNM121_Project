@@ -246,11 +246,46 @@ async function startGame() {
     const cMoviePicture = document.getElementById("cMoviePicture");
     const pMoviePicture = document.getElementById("pMoviePicture");
 
+    let pMovieReleaseYear = document.getElementById("pMovieReleaseYear");
+    let cMovieReleaseYear = document.getElementById("cMovieReleaseYear");
+
+    let pMovieDirector = document.getElementById("pMovieDirector");
+    let cMovieDirector = document.getElementById("cMovieDirector");
+
+    let pMovieDescription = document.getElementById("pMovieDescription");
+    let cMovieDescription = document.getElementById("cMovieDescription");
+
+    let pMovieRating = document.getElementById("pMovieRating");
+    let cMovieRating = document.getElementById("cMovieRating");
+
+    let pMovieGenre = document.getElementById("pMovieGenre");
+    let cMovieGenre = document.getElementById("cMovieGenre");
+
+    let pMovieCertificate = document.getElementById("pMovieCertificate");
+    let cMovieCertificate = document.getElementById("cMovieCertificate");
+
     pMovietitle.textContent = firstMovie.name;
     cMovietitle.textContent = secondMovie.name;
     // Calling the API endpoint in server and setting the img src code to the response the server gives. 
     pMoviePicture.src = serverUrl + "/media/" + firstMovie.normalized_id + ".png";
     cMoviePicture.src = serverUrl + "/media/" + secondMovie.normalized_id + ".png";
+
+    pMovieReleaseYear.textContent = "Release Year: " + firstMovie.release_year;
+    cMovieReleaseYear.textContent = "Release Year: " + secondMovie.release_year;
+
+    pMovieDirector.textContent = "Director: " + firstMovie.director;
+    cMovieDirector.textContent = "Director: " + secondMovie.director;
+
+    pMovieDescription.textContent = "Description: " + firstMovie.description;
+    cMovieDescription.textContent = "Description: " + secondMovie.description;
+
+    pMovieRating.textContent = "Rating: " + firstMovie.rating;
+
+    pMovieGenre.textContent = "Genre: " + firstMovie.genre;
+    cMovieGenre.textContent = "Genre: " + secondMovie.genre;
+
+    pMovieCertificate.textContent = "Certificate: " + firstMovie.certificate;
+    cMovieCertificate.textContent = "Certificate: " + secondMovie.certificate;
   });
 }
 
@@ -296,8 +331,20 @@ function calculateScore(choice) {
    
     let pMovietitle = document.getElementById("pMovieTitle");
     let pMoviePicture = document.getElementById("pMoviePicture");
+    let pMovieReleaseYear = document.getElementById("pMovieReleaseYear");
+    let pMovieDirector = document.getElementById("pMovieDirector");
+    let pMovieDescription = document.getElementById("pMovieDescription");
+    let pMovieRating = document.getElementById("pMovieRating");
+    let pMovieGenre = document.getElementById("pMovieGenre");
+    let pMovieCertificate = document.getElementById("pMovieCertificate");
     pMovietitle.textContent = previousMovie.name;
     pMoviePicture.src = serverUrl + "/media/" + previousMovie.normalized_id + ".png";
+    pMovieReleaseYear.textContent = "Release Year: " + previousMovie.release_year;
+    pMovieDirector.textContent = "Director: " + previousMovie.director;
+    pMovieDescription.textContent = "Description: " + previousMovie.description;
+    pMovieRating.textContent = "Rating: " + previousMovie.rating;
+    pMovieGenre.textContent = "Genre: " + previousMovie.genre;
+    pMovieCertificate.textContent = "Certificate: " + previousMovie.certificate;
 
     
     
@@ -340,6 +387,17 @@ async function getMovieData() {
     cmovietitle.textContent = currentMovie.name;
     // Calling the API endpoint in server and setting the img src code to the response the server gives. 
     cMoviePicture.src = serverUrl + "/media/" + currentMovie.normalized_id + ".png";
+    let cMovieReleaseYear = document.getElementById("cMovieReleaseYear");
+    let cMovieDirector = document.getElementById("cMovieDirector");
+    let cMovieDescription = document.getElementById("cMovieDescription");
+    let cMovieRating = document.getElementById("cMovieRating");
+    let cMovieGenre = document.getElementById("cMovieGenre");
+    let cMovieCertificate = document.getElementById("cMovieCertificate");
+    cMovieReleaseYear.textContent = "Release Year: " + currentMovie.release_year;
+    cMovieDirector.textContent = "Director: " + currentMovie.director;
+    cMovieDescription.textContent = "Description: " + currentMovie.description;
+    cMovieGenre.textContent = "Genre: " + currentMovie.genre;
+    cMovieCertificate.textContent = "Certificate: " + currentMovie.certificate;
 
   });}
   
