@@ -52,6 +52,30 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+//____________________High Contrast Mode _______________________
+const btn = document.getElementById("contrastBtn");
+
+btn.addEventListener("click", () => {
+  document.body.classList.toggle("high-contrast");
+
+  // Save preference
+  const isOn = document.body.classList.contains("high-contrast");
+  localStorage.setItem("highContrast", isOn);
+});
+
+function toggleHighContrast() {
+    document.body.classList.toggle("high-contrast");
+
+    const isOn = document.body.classList.contains("high-contrast");
+    localStorage.setItem("highContrast", isOn);
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    if (localStorage.getItem("highContrast") === "true") {
+      document.body.classList.add("high-contrast");
+    }
+  });
+
 //------------------globala Variablar----------
 let currentMovie = null;
 let previousMovie = null;
