@@ -238,17 +238,17 @@ async function startGame() {
     let firstMovie = jsonBody[0];
     let secondMovie = jsonBody[1];
 
-    let cmovietitle = document.getElementById("cMovieTitle");
-    let pmovietitle = document.getElementById("pMovieTitle");
+    let cMovietitle = document.getElementById("cMovieTitle");
+    let pMovietitle = document.getElementById("pMovieTitle");
 
     const cMoviePicture = document.getElementById("cMoviePicture");
     const pMoviePicture = document.getElementById("pMoviePicture");
 
-    cmovietitle.textContent = firstMovie.name;
-    pmovietitle.textContent = secondMovie.name;
+    pMovietitle.textContent = firstMovie.name;
+    cMovietitle.textContent = secondMovie.name;
     // Calling the API endpoint in server and setting the img src code to the response the server gives. 
-    cMoviePicture.src = serverUrl + "/media/" + firstMovie.normalized_id + ".png";
-    pMoviePicture.src = serverUrl + "/media/" + secondMovie.normalized_id + ".png";
+    pMoviePicture.src = serverUrl + "/media/" + firstMovie.normalized_id + ".png";
+    cMoviePicture.src = serverUrl + "/media/" + secondMovie.normalized_id + ".png";
   });
 }
 
@@ -274,7 +274,7 @@ function calculateScore(choice) {
 
   let isCorrect = false;
 
-  // setts isCooret to true or false
+  // sets isCorrect to true or false
   if (choice === "higher") {
     isCorrect = currentRating >= previousRating;
   } else if (choice === "lower") {
@@ -289,6 +289,16 @@ function calculateScore(choice) {
 
     // shift movies
     previousMovie = currentMovie;
+    
+    // Uppdate
+   
+    let pMovietitle = document.getElementById("pMovieTitle");
+    let pMoviePicture = document.getElementById("pMoviePicture");
+    pMovietitle.textContent = previousMovie.name;
+    pMoviePicture.src = serverUrl + "/media/" + previousMovie.normalized_id + ".png";
+
+    
+    
 
     // get a new movie
     getMovieData();
