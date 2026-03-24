@@ -421,8 +421,8 @@ input:checked + .slider:before {
 .gamePageContainer{
     display: grid;
     grid-template-columns: 2fr 1fr 2fr;
-    grid-template-rows: 1fr;
-
+    grid-template-rows: auto;
+    align-items: stretch
 }
 
 .previousMovie{
@@ -495,7 +495,7 @@ input:checked + .slider:before {
     align-self: center;      
     text-align: center;      
     width: 80%;
-    height: 50%;
+    height: auto;          
     border: none;
     border-radius: 40px;
     background: linear-gradient(90deg, #910915 0%, #ff3503 100%);
