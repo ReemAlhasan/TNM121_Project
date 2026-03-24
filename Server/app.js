@@ -66,6 +66,21 @@ async function loadIdArray() {
         .project(projectionQuery)
         .toArray();
 
+    const mediaDir = path.join(__dirname, "media");
+
+  // Behåll bara de filmer som har en motsvarande .png-fil i media/
+   const moviesWithImages = [];
+
+  for (const i of idArray) {
+    const filename = i.normalized_id + ".png";           // t.ex. "567.png"
+    const filePath = path.join(mediaDir, filename);        // t.ex. ".../media/567.png"
+
+    if (fs.existsSync(filePath)) {                         // om filen finns
+      moviesWithImages.push(i);                          // lägg till i listan
+    }
+  }
+  idArray = moviesWithImages;
+
     console.log("ID cache loaded. Number of movies:", idArray.length);
     if (idArray.length > 0) {
         console.log("First ID:", idArray[0]);
