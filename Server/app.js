@@ -1,240 +1,216 @@
-// _____________________ BASIC SERVER SETUP _____________________
-// Include built‑in Node modules
 const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
-
-// Server properties
-const hostname = "127.0.0.1";
-const port = 3000;
-const serverUrl = "http://" + hostname + ":" + port;
-
-// Include MongoDB driver
 const MongoClient = require("mongodb").MongoClient;
 
-// DB server properties
-const dbHostname = "127.0.0.1";
-const dbPort = 27017;
-const dbServerUrl = "mongodb://" + dbHostname + ":" + dbPort;
+const hostname = "127.0.0.1";
+const port = 3000;
+const dbClient = new MongoClient("mongodb://127.0.0.1:27017");
 
-// MongoDB client
-const dbClient = new MongoClient(dbServerUrl);
+let imdbCollection;
+let validIds = new Set(); // only movies that have a matching .png file will be stored here
 
-// Database / collection names
-const dbName = "tnm121-project";
-const dbImdbCollectionName = "imdb";
-const dbActorInfoCollectionName = "actorinfo";
-const dbBechdelCollectionName = "bechdel";
+// ---------------- DB INIT ----------------
 
-// Additional meta 
-const systemName = "TNM121 Project MongoDB Server";
-
-// _____________________ MIME TYPE HANDLER _____________________
-const mimeTypes = {
-    ".html": "text/html",
-    ".js": "application/javascript",
-    ".css": "text/css",
-    ".json": "application/json",
-    ".png": "image/png",
-    ".txt": "text/plain"
-};
-
-// _____________________ GLOBALS (DB + COLLECTION + ID CACHE) _____________________
-let db = null;
-let imdbCollection = null;
-let idArray = []; // will hold all { normalized_id } from imdb collection
-
-// _____________________ INITIAL DB SETUP _____________________
-async function initDatabase() {
-    console.log("Connecting to MongoDB at " + dbServerUrl + " ...");
+// Connect to MongoDB and prepare the movie pool before the server starts accepting requests
+async function initDB() {
     await dbClient.connect();
+    const db = dbClient.db("tnm121-project");
+    imdbCollection = db.collection("imdb");
 
-    db = dbClient.db(dbName);
-    imdbCollection = db.collection(dbImdbCollectionName);
-
-    console.log("Connected to database:", dbName);
-    console.log("Using collection:", dbImdbCollectionName);
-
-    await loadIdArray(); // fill idArray once at startup
+    // Go through every movie in the database and check if its poster image actually exists on disk
+    // We only want to serve movies that have images — otherwise the game looks broken
+    const allIds = await imdbCollection.find({}, { projection: { normalized_id: 1 } }).toArray();
+    allIds.forEach(doc => {
+        const imgPath = path.join(__dirname, "media", doc.normalized_id + ".png");
+        if (fs.existsSync(imgPath)) {
+            validIds.add(doc.normalized_id);
+        }
+    });
+    console.log("Server running. Movies with images:", validIds.size);
 }
 
-// Load all normalized_id values into idArray
-async function loadIdArray() {
-    const projectionQuery = { normalized_id: 1 };
-    idArray = await imdbCollection
-        .find({})
-        .project(projectionQuery)
-        .toArray();
+// ---------------- BUILD QUERY FROM PARAMS ----------------
 
-    const mediaDir = path.join(__dirname, "media");
+// Translate the URL query parameters sent by the client into a MongoDB filter object
+// For example: ?genre=drama&yearMin=2000 becomes { genre: { $elemMatch: ... }, year: { $gte: 2000 } }
+function buildQuery(params) {
+    const query = {};
 
-  // Behåll bara de filmer som har en motsvarande .png-fil i media/
-   const moviesWithImages = [];
+    // Always restrict the pool to movies that have a poster image
+    query.normalized_id = { $in: Array.from(validIds) };
 
-  for (const i of idArray) {
-    const filename = i.normalized_id + ".png";           // t.ex. "567.png"
-    const filePath = path.join(mediaDir, filename);        // t.ex. ".../media/567.png"
-
-    if (fs.existsSync(filePath)) {                         // om filen finns
-      moviesWithImages.push(i);                          // lägg till i listan
-    }
-  }
-  idArray = moviesWithImages;
-
-    console.log("ID cache loaded. Number of movies:", idArray.length);
-    if (idArray.length > 0) {
-        console.log("First ID:", idArray[0]);
-        console.log("Last  ID:", idArray[idArray.length - 1]);
-    }
-}
-
-// _____________________ RANDOM MOVIE HELPERS _____________________
-
-// Get ONE random movie document from imdb collection
-async function getRandomMovie() {
-    if (!imdbCollection || idArray.length === 0) {
-        throw new Error("Database or ID array not initialized.");
+    // Genre is stored as an array in MongoDB e.g. ["Action", "Drama"]
+    // We use $elemMatch with a case-insensitive regex so "drama" matches "Drama"
+    const genre = params.get("genre");
+    if (genre) {
+        query.genre = { $elemMatch: { $regex: new RegExp(`^${genre}$`, "i") } };
     }
 
-    const randomIndex = Math.floor(Math.random() * idArray.length);
-    const randomId = idArray[randomIndex].normalized_id;
+    // Certificate filter — also case-insensitive so "pg-13" matches "PG-13"
+    const certificate = params.get("certificate");
+    if (certificate) {
+        query.certificate = { $regex: new RegExp(`^${certificate}$`, "i") };
+    }
 
-    const findQuery = { normalized_id: randomId };
+    // Year range — only apply the boundary that was actually provided
+    const yearMin = params.get("yearMin");
+    const yearMax = params.get("yearMax");
+    if (yearMin || yearMax) {
+        query.year = {};
+        if (yearMin) query.year.$gte = Number(yearMin);
+        if (yearMax) query.year.$lte = Number(yearMax);
+    }
 
-    // No projection here → return the entire document (all fields: name, rating, year, image, etc.)
-    const docs = await imdbCollection.find(findQuery).toArray();
+    // Runtime is stored as a string like "120 min" so we need $expr to parse out the number
+    // before we can compare it to the min/max values from the client
+    const runtimeMin = params.get("runtimeMin");
+    const runtimeMax = params.get("runtimeMax");
+    if (runtimeMin || runtimeMax) {
+        const conditions = [];
+        if (runtimeMin) conditions.push({ $gte: [{ $toInt: { $arrayElemAt: [{ $split: ["$runtime", " "] }, 0] } }, Number(runtimeMin)] });
+        if (runtimeMax) conditions.push({ $lte: [{ $toInt: { $arrayElemAt: [{ $split: ["$runtime", " "] }, 0] } }, Number(runtimeMax)] });
+        query.$expr = conditions.length === 1 ? conditions[0] : { $and: conditions };
+    }
 
-    // docs is an array, but we expect exactly one document for this ID
-    return docs[0];
+    return query;
 }
 
-// Get TWO random movies (may occasionally be the same; you can handle that later if you want)
-async function getTwoRandomMovies() {
-    const movie1 = await getRandomMovie();
-    const movie2 = await getRandomMovie();
-    return [movie1, movie2];
+// ---------------- FILTERED RANDOM ----------------
+
+// Pick one random movie from the database that matches the given query
+async function getRandomMovie(query) {
+    const result = await imdbCollection.aggregate([
+        { $match: query },      // filter to only matching movies
+        { $sample: { size: 1 } } // pick one at random — MongoDB handles this efficiently
+    ]).toArray();
+
+    return result[0]; // returns undefined if no movies matched
 }
 
-// _____________________ HTTP SERVER & ROUTING _____________________
+// Pick two different random movies for the start of a game round
+async function getTwoMovies(query) {
+    const m1 = await getRandomMovie(query);
+
+    // If nothing came back, the filters were too strict — tell the caller
+    if (!m1) return null;
+
+    let m2;
+    let attempts = 0;
+
+    // Keep trying until we get a movie that isn't the same as the first one
+    // The attempts cap prevents an infinite loop if only one movie matches the filters
+    do {
+        m2 = await getRandomMovie(query);
+        attempts++;
+        if (attempts > 10) break;
+    } while (m2 && m1.normalized_id === m2.normalized_id);
+
+    if (!m2) return null;
+
+    return [m1, m2];
+}
+
+// ---------------- SERVER ----------------
+
 const server = http.createServer(async (req, res) => {
-    console.log("Incoming request:", req.method, req.url);
 
-    const requestUrl = new URL(serverUrl + req.url);
-    const pathComponents = requestUrl.pathname.split("/");
-
-    // Handle CORS preflight
+    // Handle CORS preflight requests — browsers send these before cross-origin requests
     if (req.method === "OPTIONS") {
-        sendResponse(res, 204, null, null);
+        res.writeHead(204, {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "*"
+        });
+        res.end();
         return;
     }
 
-    // Only handling GET for now
+    const url = new URL("http://localhost:3000" + req.url);
+
     if (req.method === "GET") {
-        const endpoint = pathComponents[1]; //  "startGame" or "getMovieInfo"
-        console.log("API endpoint:", endpoint);
 
+        // Wrap everything in try/catch so unexpected errors don't crash the server
         try {
-            switch (endpoint) {
-                // *************** NY ROUTE FÖR BILDER ***************
-                case "media": {                       
-                    // URL ser ut så här: /media/574.png    
-                    const filename = pathComponents[2];     
-                    
-                    const filePath = path.join(__dirname, "media", filename); 
-                    fs.readFile(filePath, (err, data) => {
-                        if (err) {                          
-                            console.error(err);                
-                            sendResponse(res, 404, "text/plain", "Image not found");
-                        } else {                             
-                            sendResponse(res, 200, "image/png", data);            
-                        }                                   
-                    });                                    
-                    break;    
-                }                             
 
-        // --------------- "startGame" ---------------
-        // Client presses Start Game button ->
-        // respond with an array of 2 random movie objects
-                case "startGame": {
-                    console.log("Routing: startGame");
-                    const movies = await getTwoRandomMovies();
-                    const jsonData = JSON.stringify(movies);
-                    sendResponse(res, 200, "application/json", jsonData);
-                    break;
+            if (url.pathname === "/startGame") {
+                // Called when the player starts a new game — needs two movies at once
+                const query = buildQuery(url.searchParams);
+                const movies = await getTwoMovies(query);
+
+                // If the filters are too strict and no movies match, tell the client
+                if (!movies) {
+                    send(res, 404, { error: "No movies found matching the selected filters. Please try different settings." });
+                    return;
                 }
 
-                // --------------- "getMovieInfo" ---------------
-                // Client answered correctly ->
-                // respond with ONE random movie object
-                case "getMovieInfo": {
-                    console.log("Routing: getMovieInfo");
-                    const movie = await getRandomMovie();
-                    const jsonData = JSON.stringify([movie]); // keep array format so it matches old client code
-                    sendResponse(res, 200, "application/json", jsonData);
-                    break;
+                send(res, 200, movies);
+
+            } else if (url.pathname === "/getMovieInfo") {
+                // Called after every correct guess — needs one new movie to continue the game
+                // Uses the same filters as startGame so the genre/year settings stay consistent
+                const query = buildQuery(url.searchParams);
+                const movie = await getRandomMovie(query);
+
+                if (!movie) {
+                    send(res, 404, { error: "No movie found." });
+                    return;
                 }
 
-                // --------------- Default: no specific API requested ---------------
-                default: {
-                    sendResponse(
-                        res,
-                        200,
-                        "text/plain",
-                        "Default response from Node.js server. No specific client request."
-                    );
-                    break;
-                }
+                send(res, 200, [movie]);
+
+            } else if (url.pathname.startsWith("/media")) {
+                // Serve a movie poster image as a static file from the media folder
+                // The client requests these automatically using the movie's normalized_id
+                const file = path.join(__dirname, "media", url.pathname.split("/")[2]);
+
+                fs.readFile(file, (err, data) => {
+                    if (err) send(res, 404, "Not found");
+                    else send(res, 200, data, "image/png");
+                });
+
+            } else {
+                // Any other route — just return a basic message
+                send(res, 200, { message: "Higher Lower Game API" });
             }
+
         } catch (error) {
-            console.error("Error while handling request:", error);
-            sendResponse(res, 500, "text/plain", "Internal server error.");
+            // Something unexpected went wrong — log it and return a 500 to the client
+            console.error("Server error:", error);
+            send(res, 500, { error: "Internal server error." });
         }
-    } else {
-        // Methods other than GET/OPTIONS
-        sendResponse(
-            res,
-            405,
-            "text/plain",
-            "Method not allowed. Use GET or OPTIONS."
-        );
     }
 });
 
-// _____________________ RESPONSE HELPER _____________________
-function sendResponse(res, statusCode, contentType, data) {
-    console.log("Sending response with status", statusCode);
-    res.statusCode = statusCode;
+// ---------------- RESPONSE ----------------
 
-    if (contentType != null) {
-        res.setHeader("Content-Type", contentType);
-    }
-
-    // CORS headers so the client (browser) can call the API
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Headers", "*");
-
-    if (data != null) {
-        res.end(data);
-    } else {
-        res.end();
-    }
-}
-
-// _____________________ START SERVER _____________________
-initDatabase()
-    .then(() => {
-        server.listen(port, hostname, () => {
-            console.log("The server is running and listening at " + serverUrl);
-        });
-    })
-    .catch((err) => {
-        console.error("Failed to initialize database:", err);
-        process.exit(1);
+// Helper to send a response — handles both JSON and binary data (images)
+function send(res, code, data, type = "application/json") {
+    res.writeHead(code, {
+        "Content-Type": type,
+        "Access-Control-Allow-Origin": "*",  // allow requests from any origin (needed for local dev)
+        "Access-Control-Allow-Headers": "*"
     });
 
-// (Optional) clean shutdown
+    // JSON gets serialized, everything else (images) gets sent as-is
+    res.end(type === "application/json" ? JSON.stringify(data) : data);
+}
+
+// ---------------- START ----------------
+
+// Connect to the database first, then start listening for requests
+initDB().then(() => {
+    server.listen(port, hostname, () => {
+        console.log("Server running on http://127.0.0.1:3000");
+    });
+}).catch(err => {
+    // If we can't connect to MongoDB there's no point running the server
+    console.error("Failed to connect to database:", err);
+    process.exit(1);
+});
+
+// Close the database connection cleanly when the server is stopped with Ctrl+C
 process.on("SIGINT", async () => {
-    console.log("\nShutting down server...");
+    console.log("\nShutting down...");
     await dbClient.close();
     process.exit(0);
 });
