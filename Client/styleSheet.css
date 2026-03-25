@@ -79,8 +79,8 @@ h1{
     height: 40px;
     padding: 0;
     border-radius: 40px;
-    background: linear-gradient(90deg, #910915 0%, #ff3503 100%);
-    color: #fff;
+    background: var(--primary-gradient);
+    color: var(--text);
     font-size: 20px;
     font-weight: bold;
     cursor: pointer;
@@ -112,7 +112,7 @@ h1{
 .menu-container{
     width: 80%;
     padding: 20px;
-    background: linear-gradient(90deg, #910915 0%, #ff3503 100%);
+    background: var(--primary-gradient);
     margin: 50px auto;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -175,10 +175,6 @@ button {
     color:red;
     border-radius: 5px;
     cursor: pointer;
-}
-
-button:hover {
-    background-color: rgb(241, 170, 18);
 }
 
 /* Toggle switch*/
@@ -310,7 +306,7 @@ input:checked + .slider:before {
   padding: 2px 8px;
   border-radius: 999px;
   background: rgba(0, 0, 0, 0.842);
-  color: #ffffff;
+  color: var(--text);
   font-weight: 600;
   letter-spacing: 0.2px;
 }
@@ -399,8 +395,8 @@ input:checked + .slider:before {
     padding: 0;
     border: none;
     border-radius: 40px;
-    background: linear-gradient(90deg, #910915 0%, #ff3503 100%);
-    color: #fff;
+    background: var(--primary-gradient);
+    color: var(--text);
     font-size: 20px;
     font-weight: bold;
     cursor: pointer;
@@ -446,8 +442,8 @@ input:checked + .slider:before {
     height: 120px;
     border: none;
     border-radius: 40px;
-    background: linear-gradient(90deg, #910915 0%, #ff3503 100%);
-    color: #fff;
+    background: var(--primary-gradient);
+    color: var(--text);
     font-size: 20px;
     font-weight: bold;
     margin-top: 50px;
@@ -472,8 +468,8 @@ input:checked + .slider:before {
     padding: 0;
     border: none;
     border-radius: 40px;
-    background: linear-gradient(90deg, #910915 0%, #ff3503 100%);
-    color: #fff;
+    background: var(--primary-gradient);
+    color: var(--text);
     font-size: 20px;
     font-weight: bold;
     cursor: pointer;
@@ -498,8 +494,8 @@ input:checked + .slider:before {
     height: auto;          
     border: none;
     border-radius: 40px;
-    background: linear-gradient(90deg, #910915 0%, #ff3503 100%);
-    color: #fff;
+    background: var(--primary-gradient);
+    color: var(--text);
     font-size: 20px;
     font-weight: bold;
     margin-top: 50px;

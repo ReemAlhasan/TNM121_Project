@@ -413,5 +413,15 @@ function restartGame() {
 
 // Toggle high contrast mode on/off by adding/removing a CSS class on the body
 function toggleHighContrast() {
-    document.body.classList.toggle('high-contrast');
+    document.body.classList.toggle("high-contrast");                        // Toggle the CSS
+
+    const isOn = document.body.classList.contains("high-contrast");         // Check if the class is currently applied
+    localStorage.setItem("highContrast", isOn);                             // Save settingg to lcoal storage
+    console.log("High contrast mode toggled. Now:", isOn ? "ON" : "OFF");   // Log the new state to the console for debugging
 }
+
+  window.addEventListener("DOMContentLoaded", () => { // When the page loads, check if high contrast mode was previously enabled
+    if (localStorage.getItem("highContrast") === "true") { // If it was, add the class to enable high contrast mode
+      document.body.classList.add("high-contrast"); // This will apply the high contrast CSS
+    }
+  });
