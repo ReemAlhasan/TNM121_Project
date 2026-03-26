@@ -379,9 +379,9 @@ function showGameOver() {
     `;
     overlay.innerHTML = `
         <div style="
-            background: linear-gradient(90deg, #910915 0%, #ff3503 100%);
+            background: var(--primary-gradient);
             border-radius: 20px; padding: 40px; text-align: center;
-            color: white; font-family: Arial, sans-serif; max-width: 400px;
+            color: var(--text); font-family: Arial, sans-serif; max-width: 400px;
         ">
             <h2>Game Over!</h2>
             <p style="font-size: 24px;">You got <strong>${score}</strong> correct!</p>
