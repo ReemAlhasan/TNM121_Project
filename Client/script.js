@@ -8,6 +8,11 @@ let score = 0;                 // the player's current score
 document.addEventListener("DOMContentLoaded", function () {
     console.log("HTML DOM tree loaded, and ready for manipulation.");
 
+     const logo = document.getElementById('logo');
+       if (logo) {
+        logo.src = serverUrl + "/media/BigHL.png"; // Load the logo image from the server
+       }
+
     // Set all toggle switches to ON by default and initialize the sliders
     markOnStartup();
 
