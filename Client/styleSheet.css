@@ -14,8 +14,8 @@
 
 /* High contrast overrides */
 .high-contrast {
-  --text: #F2CA19;
-  --primary-gradient: #E11845;
+  --text: #ffffff;
+  --primary-gradient: #000000;
 }
 
 body {
