@@ -75,6 +75,10 @@ h1{
 .AboutUsButton {
     grid-column: 3;
     justify-self: end;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     width: 120px;
     height: 40px;
     padding: 0;
